@@ -4,7 +4,8 @@
 
 ## Ｗireframe 畫面
 
-![註冊/登入](https://docs.google.com/drawings/d/1sv9c3hCJeJf1_GqNc1_mr2howqvW64dpbFOLGfQU6z4/edit?usp=sharing)
+![註冊/登入](https://drive.google.com/file/d/1FkukL9OVIYVjYbWUlrYxfF8EaVpRIyl7/view?usp=sharing)
+![主頁/功能](https://drive.google.com/file/d/1eM0UJjZMF0nOxLp2EZceiD2Mm0LvxPcx/view?usp=sharing)
 
 ## 核心功能
 
@@ -19,7 +20,9 @@
 - **篩選功能**: 使用者可以篩選出特定捷運站、是否有插座、是否不限時、是否寵物友善等條件。
 - **懶人快速搜尋**: 除了定位外，使用者可以透過輸入文字或一句話快速推薦符合的咖啡廳。
 
-目前為核心功能設計的架構 ⇒ 應該會是一張架構圖。
+## 系統架構
+
+![架構圖]（https://drive.google.com/file/d/1hbQL_cbrSyfENqXHVRhW8M1Ch064C7ee/view?usp=sharing）
 
 ## 技術
 
