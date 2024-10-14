@@ -4,8 +4,8 @@
 
 ## Ｗireframe 畫面
 
-![註冊/登入](planning-01/wireframe（註冊登入）.png)
-![主頁/功能](planning-01/wireframe（主頁及功能）.png)
+![註冊/登入](https://github.com/group-1-CafeMate/Frontend-main/blob/main/planning-01/wireframe%EF%BC%88%E8%A8%BB%E5%86%8A%E7%99%BB%E5%85%A5%EF%BC%89.png)
+![主頁/功能](https://github.com/group-1-CafeMate/Frontend-main/blob/main/planning-01/wireframe%EF%BC%88%E4%B8%BB%E9%A0%81%E5%8F%8A%E5%8A%9F%E8%83%BD%EF%BC%89.png)
 
 ## 核心功能
 
@@ -22,7 +22,7 @@
 
 ## 系統架構
 
-![系統架構](planning-01/架構圖.png)
+![系統架構](https://github.com/group-1-CafeMate/Frontend-main/blob/main/planning-01/%E6%9E%B6%E6%A7%8B%E5%9C%96.png)
 
 ## 技術
 
