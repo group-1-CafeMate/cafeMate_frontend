@@ -4,8 +4,8 @@
 
 ## Ｗireframe 畫面
 
-![註冊/登入](https://drive.google.com/file/d/1FkukL9OVIYVjYbWUlrYxfF8EaVpRIyl7/view?usp=sharing)
-![主頁/功能](https://drive.google.com/file/d/1eM0UJjZMF0nOxLp2EZceiD2Mm0LvxPcx/view?usp=sharing)
+![註冊/登入](planning-01/wireframe（註冊登入）.png)
+![主頁/功能](planning-01/wireframe（主頁及功能）.png)
 
 ## 核心功能
 
@@ -22,7 +22,7 @@
 
 ## 系統架構
 
-![架構圖]（https://drive.google.com/file/d/1hbQL_cbrSyfENqXHVRhW8M1Ch064C7ee/view?usp=sharing）
+![系統架構](planning-01/架構圖.png)
 
 ## 技術
 
