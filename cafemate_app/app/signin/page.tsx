@@ -1,3 +1,5 @@
+"use client"; // 加在檔案的第一行
+
 import React, { useState } from "react";
 import Button from "components/Button";
 
