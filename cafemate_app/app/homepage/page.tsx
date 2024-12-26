@@ -1,10 +1,10 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import Link from "next/link";
-import Image from "next/image";
 import { Splide, SplideSlide } from "@splidejs/react-splide";
 import "@splidejs/react-splide/css";
+import Image from "next/image";
+import Link from "next/link";
+import React, { useEffect, useState } from "react";
 
 const HomePage: React.FC = () => {
   const [activeTab, setActiveTab] = useState<string>("homepage");
@@ -89,9 +89,8 @@ const HomePage: React.FC = () => {
       <div className="flex justify-between items-center px-6 py-4 bg-[#563517] text-white">
         <div className="flex space-x-6">
           <button
-            className={`${
-              activeTab === "homepage" ? "underline" : ""
-            } hover:underline`}
+            className={`${activeTab === "homepage" ? "underline" : ""
+              } hover:underline`}
             onClick={() => setActiveTab("homepage")}
           >
             Homepage
@@ -130,11 +129,10 @@ const HomePage: React.FC = () => {
           {options.map((option) => (
             <div
               key={option}
-              className={`flex items-center justify-center px-4 py-2 rounded-full cursor-pointer transition-all ${
-                selectedOptions.includes(option)
-                  ? "bg-green-500 text-white border-green-500"
-                  : "bg-gray-200 text-gray-700 border-gray-300"
-              }`}
+              className={`flex items-center justify-center px-4 py-2 rounded-full cursor-pointer transition-all ${selectedOptions.includes(option)
+                ? "bg-green-500 text-white border-green-500"
+                : "bg-gray-200 text-gray-700 border-gray-300"
+                }`}
               onClick={() => toggleOption(option)}
             >
               {selectedOptions.includes(option) && (
