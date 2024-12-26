@@ -1,3 +1,5 @@
+"use client"; // 加在檔案的第一行
+
 import React, { useState } from "react";
 import Button from "components/Button";
 
@@ -12,7 +14,7 @@ const SignUp: React.FC = () => {
   const handleSignUp = async () => {
     try {
       // 向後端發送 POST 請求
-      const response = await fetch("http://localhost:8000/sign_up/", {
+      const response = await fetch("http://localhost:8000/signup/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -42,8 +44,8 @@ const SignUp: React.FC = () => {
         <form
           className="space-y-6"
           onSubmit={(e) => {
-            e.preventDefault(); // 阻止表單預設行為
-            handleSignUp(); // 呼叫註冊函數
+            e.preventDefault(); // 阻止默認行為，避免表單觸發 GET 請求
+            handleSignUp(); // 執行自定義註冊函式
           }}
         >
           <div>
@@ -90,6 +92,7 @@ const SignUp: React.FC = () => {
           <div className="mt-4">
             <Button
               label="Let's get started"
+              onClick={() => alert("Sign Up Clicked")}
               variant="solid"
               className="bg-button-bg-color hover:bg-button-hover-bg-color"
             />
