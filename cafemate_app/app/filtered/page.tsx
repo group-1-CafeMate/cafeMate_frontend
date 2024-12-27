@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import Link from "next/link";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 interface Cafe {
@@ -167,9 +168,10 @@ const FilteredPage = () => {
         {/* Filtered Cafes */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
           {getCurrentPageCafes().map((cafe) => (
-            <div
+            <Link
+              href={`/cafeinfo/${cafe.cafe_id}`}
               key={cafe.cafe_id}
-              className="bg-white rounded-lg shadow-lg p-4 relative"
+              className="bg-white rounded-lg shadow-lg p-4 relative transform transition-transform hover:scale-105"
             >
               {isPerfectMatch(cafe.labels) && (
                 <div className="absolute top-2 left-2 bg-red-600 text-white px-3 py-1 rounded-lg text-sm">
@@ -205,7 +207,7 @@ const FilteredPage = () => {
               <div className="absolute bottom-4 right-4 bg-[#724e2c] text-white px-3 py-1 rounded">
                 {cafe.distance.toFixed(1)}km away from you
               </div>
-            </div>
+            </Link>
           ))}
         </div>
 

@@ -2,7 +2,7 @@ interface ButtonProps {
   label: string;
   onClick: () => void;
   variant?: "solid" | "outline";
-  className?: string; // 新增這行
+  className?: string;
 }
 
 const Button = ({ label, onClick, variant = "solid" }: ButtonProps) => {
