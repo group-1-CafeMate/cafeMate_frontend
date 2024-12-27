@@ -1,6 +1,39 @@
+"use client"; // 加在檔案的第一行
+
+import React, { useState } from "react";
 import Button from "components/Button";
 
 const SignIn = () => {
+  const [username, setUsername] = useState(""); // 儲存使用者名稱
+  const [password, setPassword] = useState(""); // 儲存密碼
+  const [error, setError] = useState(""); // 儲存錯誤訊息
+
+  // 發送登入請求的函數
+  const handleSignIn = async () => {
+    try {
+      // 向後端發送 POST 請求
+      const response = await fetch("http://localhost:8000/login/", {
+        method: "POST", // HTTP 請求方法
+        headers: {
+          "Content-Type": "application/json", // 設定內容類型為 JSON
+        },
+        body: JSON.stringify({ username, password }), // 將使用者名稱與密碼轉為 JSON 傳送
+      });
+
+      const data = await response.json(); // 解析後端回應的 JSON
+
+      if (response.ok) {
+        alert("登入成功！");
+        console.log("使用者 UID:", data.uid);
+        // 可以在這裡執行跳轉頁面或儲存全域狀態的操作
+      } else {
+        setError(data.message || "登入失敗");
+      }
+    } catch (err) {
+      setError("網絡錯誤，請稍後再試！");
+    }
+  };
+
   return (
     <div className="flex items-center justify-center min-h-screen bg-main-bg-color">
       <div className="flex flex-wrap bg-white rounded-lg shadow-lg w-full max-w-4xl">
@@ -8,7 +41,7 @@ const SignIn = () => {
         <div
           className="w-full md:w-1/2 bg-cover bg-center rounded-l-lg"
           style={{
-            backgroundImage: "url('/images/cafe-background.jpg')", // 本地圖片存放位置
+            backgroundImage: "url('/images/cafe-background.jpg')", // 背景圖片
           }}
         >
           <div className="p-8 h-full flex flex-col justify-center items-center bg-black bg-opacity-50 text-white text-center">
@@ -17,13 +50,11 @@ const SignIn = () => {
             </h1>
             <p className="mb-4">Then you should try us!</p>
             <p className="mb-8">
-              CafeMate is your coffee buddy in Taipei and New Taipei City! Share
-              your preferences, and we’ll find the perfect café nearby. Smart,
-              personal, and made for coffee lovers like you!
+              CafeMate 是台北和新北地區的咖啡好幫手！
             </p>
             <Button
               label="SIGN UP"
-              onClick={() => alert("Sign Up Clicked")}
+              onClick={() => alert("Sign Up Clicked")} // 點擊後的回應
               variant="solid"
             />
           </div>
@@ -32,9 +63,15 @@ const SignIn = () => {
         {/* 右側區塊 */}
         <div className="w-full md:w-1/2 p-8 flex flex-col justify-center">
           <h2 className="text-2xl font-bold text-center mb-8">
-            Welcome back to Cafemate
+            歡迎回到 Cafemate
           </h2>
-          <form className="space-y-6">
+          <form
+            className="space-y-6"
+            onSubmit={(e) => {
+              e.preventDefault(); // 阻止表單預設提交行為
+              handleSignIn(); // 呼叫登入函數
+            }}
+          >
             <div>
               <label htmlFor="username" className="block text-foreground">
                 USERNAME
@@ -42,8 +79,10 @@ const SignIn = () => {
               <input
                 type="text"
                 id="username"
-                placeholder="Enter username"
+                placeholder="Enter username" // 提示使用者輸入使用者名稱
                 className="w-full border-b-2 border-gray-300 focus:outline-none focus:border-accent-color py-2"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)} // 更新使用者名
               />
             </div>
             <div>
@@ -53,22 +92,20 @@ const SignIn = () => {
               <input
                 type="password"
                 id="password"
-                placeholder="********"
+                placeholder="********" // 提示使用者輸入密碼
                 className="w-full border-b-2 border-gray-300 focus:outline-none focus:border-accent-color py-2"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)} // 更新密碼
               />
             </div>
+            {error && <p className="text-red-500 text-sm">{error}</p>} {/* 顯示錯誤訊息 */}
             <div className="text-right">
               <a href="#" className="text-sm text-gray-500 hover:underline">
-                Forgot Password?
+                忘記密碼？
               </a>
             </div>
             <div className="mt-4">
-              <Button
-                label="SIGN IN"
-                onClick={() => alert("Sign In Clicked")}
-                variant="solid"
-                className="bg-accent-color"
-              />
+              <Button label="SIGN IN" variant="solid" className="bg-accent-color" />
             </div>
           </form>
         </div>
