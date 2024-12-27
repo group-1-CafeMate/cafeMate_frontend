@@ -1,7 +1,8 @@
 "use client"; // 加在檔案的第一行
 
-import React, { useState } from "react";
 import Button from "components/Button";
+import React, { useState } from "react";
+import API from "src/constants/api";
 
 const SignUp: React.FC = () => {
   const [username, setUsername] = useState(""); // 儲存使用者名稱
@@ -14,7 +15,7 @@ const SignUp: React.FC = () => {
   const handleSignUp = async () => {
     try {
       // 向後端發送 POST 請求
-      const response = await fetch("http://localhost:8000/signup/", {
+      const response = await fetch(API.User.SignUp, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
