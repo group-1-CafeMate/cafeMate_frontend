@@ -1,6 +1,7 @@
 "use client"; // 加在檔案的第一行
 
 import Button from "components/Button";
+import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import API from "src/constants/api";
 
@@ -10,7 +11,7 @@ const SignUp: React.FC = () => {
   const [password, setPassword] = useState(""); // 儲存密碼
   const [error, setError] = useState(""); // 儲存錯誤訊息
   const [success, setSuccess] = useState(""); // 儲存成功訊息
-
+  const router = useRouter();
   // 發送註冊請求的函數
   const handleSignUp = async () => {
     try {
@@ -28,6 +29,7 @@ const SignUp: React.FC = () => {
       if (response.ok) {
         setSuccess("註冊成功！歡迎加入！");
         setError(""); // 清除錯誤訊息
+        router.push("/signin");
       } else {
         setError(data.message || "註冊失敗");
         setSuccess(""); // 清除成功訊息
