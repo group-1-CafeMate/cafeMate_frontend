@@ -64,7 +64,7 @@ const FilteredPage = () => {
 
       // 從 API 獲取數據
       const response = await fetch(
-        `http://localhost:8000/cafes/filter/?${queryParams.toString()}`
+        `http://localhost:8000/cafes/filter/?latitude=24.9878632&longitude=121.5748555`
       );
 
       if (response.ok) {
