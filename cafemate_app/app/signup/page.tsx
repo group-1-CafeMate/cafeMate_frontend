@@ -40,12 +40,17 @@ const SignUp: React.FC = () => {
   return (
     <div className="flex items-center justify-center min-h-screen bg-main-bg-color">
       <div className="bg-white rounded-lg shadow-lg w-full max-w-sm p-8">
-        <h2 className="text-2xl font-bold text-center mb-8">Create an Account</h2>
+        <h2 className="text-2xl font-bold text-center mb-8">
+          Create an Account
+        </h2>
         <form
           className="space-y-6"
           onSubmit={(e) => {
             e.preventDefault(); // 阻止默認行為，避免表單觸發 GET 請求
             handleSignUp(); // 執行自定義註冊函式
+          }}
+          style={{
+            minHeight: "400px", // 設定最小高度，避免內容不足時跑版
           }}
         >
           <div>
@@ -87,9 +92,12 @@ const SignUp: React.FC = () => {
               onChange={(e) => setPassword(e.target.value)} // 更新密碼
             />
           </div>
-          {error && <p className="text-red-500 text-sm">{error}</p>} {/* 顯示錯誤訊息 */}
-          {success && <p className="text-green-500 text-sm">{success}</p>} {/* 顯示成功訊息 */}
-          <div className="mt-4">
+          {error && <p className="text-red-500 text-sm">{error}</p>}{" "}
+          {/* 顯示錯誤訊息 */}
+          {success && <p className="text-green-500 text-sm">{success}</p>}{" "}
+          {/* 顯示成功訊息 */}
+          <div className="mt-4 flex justify-center">
+            {/* 使用 flex 和 justify-center 屬性讓按鈕置中 */}
             <Button
               label="Let's get started"
               onClick={() => alert("Sign Up Clicked")}

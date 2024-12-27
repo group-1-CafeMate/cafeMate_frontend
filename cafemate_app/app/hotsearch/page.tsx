@@ -29,9 +29,10 @@ const HotSearchPage = () => {
       try {
         const response = await fetch("http://127.0.0.1:8000/cafes/top/", {
           method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
+          credentials: "include",
+          //   headers: {
+          //     "Content-Type": "application/json",
+          //   },
         });
 
         if (!response.ok) {
