@@ -3,6 +3,7 @@
 import Button from "components/Button";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
+import API from "src/constants/api";
 
 const SignIn = () => {
   const [username, setUsername] = useState(""); // 儲存使用者名稱
@@ -13,7 +14,7 @@ const SignIn = () => {
   const handleSignIn = async () => {
     try {
       // 向後端發送 POST 請求
-      const response = await fetch("http://localhost:8000/login/", {
+      const response = await fetch(API.User.Login, {
         method: "POST", // HTTP 請求方法
         headers: {
           "Content-Type": "application/json", // 設定內容類型為 JSON
