@@ -1,13 +1,14 @@
 "use client"; // 加在檔案的第一行
 
-import React, { useState } from "react";
 import Button from "components/Button";
+import { useRouter } from "next/navigation";
+import React, { useState } from "react";
 
 const SignIn = () => {
   const [username, setUsername] = useState(""); // 儲存使用者名稱
   const [password, setPassword] = useState(""); // 儲存密碼
   const [error, setError] = useState(""); // 儲存錯誤訊息
-
+  const router = useRouter();
   // 發送登入請求的函數
   const handleSignIn = async () => {
     try {
@@ -23,9 +24,8 @@ const SignIn = () => {
       const data = await response.json(); // 解析後端回應的 JSON
 
       if (response.ok) {
-        alert("登入成功！");
-        console.log("使用者 UID:", data.uid);
         // 可以在這裡執行跳轉頁面或儲存全域狀態的操作
+        router.push("/homepage");
       } else {
         setError(data.message || "登入失敗");
       }
