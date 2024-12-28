@@ -4,6 +4,7 @@ import dynamic from "next/dynamic";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import API from "src/constants/api";
 
 const Splide = dynamic(
@@ -15,12 +16,7 @@ const SplideSlide = dynamic(
   { ssr: false }
 );
 
-const getCookie = (name: string) => {
-  const cookie = document.cookie
-    .split("; ")
-    .find((row) => row.startsWith(name));
-  return cookie ? cookie.split("=")[1] : null;
-};
+// Removed unused getCookie function
 
 interface Cafe {
   cafe_id: string; // 咖啡廳的唯一 ID
@@ -29,8 +25,8 @@ interface Cafe {
   gmap_link?: string; // Google Maps 鏈接（可選）
   addr: string; // 咖啡廳地址
 }
-
-const HomePage: React.FC = () => {
+const HomePage = () => {
+  const router = useRouter();
   const [activeTab, setActiveTab] = useState<string>("homepage");
   const [inputValue, setInputValue] = useState<string>("");
   const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
@@ -63,8 +59,22 @@ const HomePage: React.FC = () => {
   }, []);
 
   const handleSearch = () => {
-    const searchQuery = [...selectedOptions, inputValue].join(", ");
-    console.log("搜尋條件:", searchQuery);
+    // 构建查询字符串
+    const queryParams = new URLSearchParams();
+
+    // 添加选定的筛选条件
+    selectedOptions.forEach((option) => {
+      queryParams.append(option, "true");
+    });
+
+    // 如果有地理位置，添加经纬度
+    if (location) {
+      queryParams.append("latitude", location.latitude.toString());
+      queryParams.append("longitude", location.longitude.toString());
+    }
+
+    // 导航到 FilteredPage
+    router.push(`/filtered?${queryParams.toString()}`);
   };
 
   useEffect(() => {
@@ -395,41 +405,38 @@ const HomePage: React.FC = () => {
           <p className="text-sm">© 2024 CafeMate. All rights reserved.</p>
         </footer>
 
-        <style jsx global>
-          {`
-            .splide__arrow {
-              background: white;
-              width: 3rem;
-              height: 3rem;
-              border-radius: 50%;
-              display: flex;
-              align-items: center;
-              justify-content: center;
-              position: absolute;
-              top: 50%;
-              transform: translateY(-50%);
-              box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-              transition: background-color 0.2s;
-              z-index: 10;
-            }
-            .splide__arrow:hover {
-              background: #f8f8f8;
-            }
-            .splide__arrow--prev {
-              left: -1.5rem;
-            }
-            .splide__arrow--next {
-              right: -1.5rem;
-            }
-            .splide__track {
-              overflow: visible;
-              padding: 1rem 0;
-            }
-          `}
-        </style>
+        <style jsx global>{`
+          .splide__arrow {
+            background: white;
+            width: 3rem;
+            height: 3rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.2s;
+            z-index: 10;
+          }
+          .splide__arrow:hover {
+            background: #f8f8f8;
+          }
+          .splide__arrow--prev {
+            left: -1.5rem;
+          }
+          .splide__arrow--next {
+            right: -1.5rem;
+          }
+          .splide__track {
+            overflow: visible;
+            padding: 1rem 0;
+          }
+        `}</style>
       </div>
     </div>
   );
 };
-
 export default HomePage;
