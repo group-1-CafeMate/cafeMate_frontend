@@ -24,6 +24,7 @@ const FilteredPage = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string>("");
   const [inputValue, setInputValue] = useState<string>("");
+  const [location, setLocation] = useState<GeolocationCoordinates | null>(null);
 
   const options = [
     "work_and_study_friendly",
@@ -53,6 +54,20 @@ const FilteredPage = () => {
     );
   };
 
+  useEffect(() => {
+    if (typeof window !== "undefined" && navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setLocation(position.coords);
+          setError(null);
+        },
+        (err) => {
+          setError(err.message);
+        }
+      );
+    }
+  }, []);
+  
   const fetchCafes = async () => {
     setIsLoading(true);
     setError("");
@@ -64,10 +79,22 @@ const FilteredPage = () => {
         queryParams.append(option, "true");
       });
 
+      const baseUrl = API.Cafe.GetCafes;
+      const query = location
+        ? `?latitude=${location.latitude}&longitude=${location.longitude}`
+        : "";
+
       // 從 API 獲取數據
       const response = await fetch(
-        `${API.Cafe.GetFilteredCafe}?latitude=24.9878632&longitude=121.5748555`
+        `${API.Cafe.GetFilteredCafe}?latitude=24.9878632&longitude=121.5748555`,
+        {
+          method: "GET",
+          credentials: "include", // 搭配後端 @login_required，用來傳遞身分驗證的 Cookie  
+        }
       );
+      
+      console.log("Response status: ", response.status);
+      // console.log("Response body: ", await response.text()); // 检查返回的原始内容
 
       if (response.ok) {
         const data = await response.json();
@@ -170,14 +197,14 @@ const FilteredPage = () => {
               </div>
 
               {/* Display location as a link */}
-              <a
+              <span
                 href={cafe.gmap_link || "#"}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-blue-500 underline mb-2 inline-block"
               >
                 View on Google Maps
-              </a>
+              </span>
 
               <p>🕒 {cafe.open_hour.join(", ")}</p>
               <p>🏷️ {cafe.labels.length} 個符合標籤</p>
