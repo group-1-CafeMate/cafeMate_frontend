@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import Link from "next/link";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import Link from "next/link";
+import React, { useEffect, useState } from "react";
 import API from "src/constants/api";
 
 // interface 是 TypeScript 用來定義物件結構的工具，幫助描述這些物件應該包含的屬性和屬性類型。
@@ -59,7 +59,7 @@ const FilteredPage = () => {
       navigator.geolocation.getCurrentPosition(
         (position) => {
           setLocation(position.coords);
-          setError(null);
+          setError("");
         },
         (err) => {
           setError(err.message);
@@ -89,10 +89,10 @@ const FilteredPage = () => {
         baseUrl + query,
         {
           method: "GET",
-          credentials: "include", // 搭配後端 @login_required，用來傳遞身分驗證的 Cookie  
+          credentials: "include", // 搭配後端 @login_required，用來傳遞身分驗證的 Cookie
         }
       );
-      
+
       console.log("Response status: ", response.status);
       // console.log("Response body: ", await response.text()); // 检查返回的原始内容
 
