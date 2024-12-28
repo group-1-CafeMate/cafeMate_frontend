@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import API from "src/constants/api";
 
 // interface 是 TypeScript 用來定義物件結構的工具，幫助描述這些物件應該包含的屬性和屬性類型。
 interface Cafe {
@@ -64,7 +65,7 @@ const FilteredPage = () => {
 
       // 從 API 獲取數據
       const response = await fetch(
-        `http://localhost:8000/cafes/filter/?latitude=24.9878632&longitude=121.5748555`
+        `${API.Cafe.GetFilteredCafe}?latitude=24.9878632&longitude=121.5748555`
       );
 
       if (response.ok) {
