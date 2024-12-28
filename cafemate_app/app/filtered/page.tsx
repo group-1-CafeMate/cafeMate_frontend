@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import Link from "next/link";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import API from "src/constants/api";
 
@@ -149,9 +150,10 @@ const FilteredPage = () => {
         {/* Filtered Cafes */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
           {getCurrentPageCafes().map((cafe) => (
-            <div
+            <Link
+              href={`/cafeinfo/${cafe.cafe_id}`}
               key={cafe.cafe_id}
-              className="bg-white rounded-lg shadow-lg p-4 relative"
+              className="bg-white rounded-lg shadow-lg p-4 relative transform transition-transform hover:scale-105"
             >
               <img
                 src={cafe.image_url || "/placeholder-image.jpg"}
@@ -182,7 +184,7 @@ const FilteredPage = () => {
               <div className="absolute bottom-4 right-4 bg-[#724e2c] text-white px-3 py-1 rounded">
                 {cafe.distance.toFixed(1)}km away from you
               </div>
-            </div>
+            </Link>
           ))}
         </div>
 
