@@ -1,16 +1,19 @@
 "use client";
 
-
 import dynamic from "next/dynamic";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import API from "src/constants/api";
 
+
 const Splide = dynamic(() => import("@splidejs/react-splide").then((mod) => mod.Splide), { ssr: false });
 const SplideSlide = dynamic(() => import("@splidejs/react-splide").then((mod) => mod.SplideSlide), { ssr: false });
 
-
+const getCookie = (name: string) => {
+  const cookie = document.cookie.split('; ').find(row => row.startsWith(name));
+  return cookie ? cookie.split('=')[1] : null;
+};
 
 const HomePage: React.FC = () => {
   const [activeTab, setActiveTab] = useState<string>("homepage");
@@ -57,14 +60,14 @@ const HomePage: React.FC = () => {
         ? `?latitude=${location.latitude}&longitude=${location.longitude}`
         : "";
 
+
       const response = await fetch(baseUrl + query, {
         method: 'GET',
-        headers: {
-          credentials: 'include',
-        }
+        credentials: 'include',
       });
       const data = await response.json();
-      setNearbyCafes(data);
+      console.log(data);
+      setNearbyCafes(data["cafes"]);
     };
 
     const fetchPopularCafes = async () => {
@@ -74,15 +77,13 @@ const HomePage: React.FC = () => {
         ? `?latitude=${location.latitude}&longitude=${location.longitude}`
         : "";
 
-
       const response = await fetch(baseUrl + query, {
         method: 'GET',
-        headers: {
-          credentials: 'include',
-        }
+        credentials: 'include',
       });
       const data = await response.json();
-      setPopularCafes(data);
+      console.log(data);
+      setPopularCafes(data["cafes"]);
     };
 
     fetchNearbyCafes();
