@@ -29,7 +29,7 @@ const SignUp: React.FC = () => {
       if (response.ok) {
         setSuccess("註冊成功！歡迎加入！");
         setError(""); // 清除錯誤訊息
-        router.push("/signin");
+        router.push("/signIn");
       } else {
         setError(data.message || "註冊失敗");
         setSuccess(""); // 清除成功訊息

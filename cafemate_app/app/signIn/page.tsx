@@ -27,7 +27,7 @@ const SignIn = () => {
 
       if (response.ok) {
         // 可以在這裡執行跳轉頁面或儲存全域狀態的操作
-        router.push("/homepage");
+        router.push("/homePage");
       } else {
         setError(data.message || "登入失敗");
       }
