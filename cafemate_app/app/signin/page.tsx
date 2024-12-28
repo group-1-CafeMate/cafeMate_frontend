@@ -19,6 +19,7 @@ const SignIn = () => {
         headers: {
           "Content-Type": "application/json", // 設定內容類型為 JSON
         },
+        credentials: 'include',
         body: JSON.stringify({ username, password }), // 將使用者名稱與密碼轉為 JSON 傳送
       });
 
