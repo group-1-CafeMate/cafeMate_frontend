@@ -59,7 +59,7 @@ const SignIn = () => {
             <div className="mt-4 flex justify-center">
               <Button
                 label="SIGN UP"
-                onClick={() => alert("Sign Up Clicked")}
+                onClick={() => router.push("/signup")}
                 variant="solid"
               />
             </div>
