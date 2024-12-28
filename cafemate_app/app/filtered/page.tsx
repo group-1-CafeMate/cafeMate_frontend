@@ -67,7 +67,7 @@ const FilteredPage = () => {
       );
     }
   }, []);
-  
+
   const fetchCafes = async () => {
     setIsLoading(true);
     setError("");
@@ -79,14 +79,14 @@ const FilteredPage = () => {
         queryParams.append(option, "true");
       });
 
-      const baseUrl = API.Cafe.GetCafes;
+      const baseUrl = API.Cafe.GetFilteredCafe;
       const query = location
         ? `?latitude=${location.latitude}&longitude=${location.longitude}`
         : "";
 
       // 從 API 獲取數據
       const response = await fetch(
-        `${API.Cafe.GetFilteredCafe}?latitude=24.9878632&longitude=121.5748555`,
+        baseUrl + query,
         {
           method: "GET",
           credentials: "include", // 搭配後端 @login_required，用來傳遞身分驗證的 Cookie  
