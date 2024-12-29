@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
+import API from "src/constants/api";
 
 interface Cafe {
   cafe_id: string;
@@ -31,7 +32,7 @@ const HotSearchPage = () => {
     const fetchTopCafes = async () => {
       setIsLoading(true);
       try {
-        const response = await fetch("http://127.0.0.1:8000/cafes/top/", {
+        const response = await fetch(API.Cafe.GetTopCafe, {
           method: "GET",
           credentials: "include",
         });

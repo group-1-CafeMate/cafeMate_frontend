@@ -44,10 +44,7 @@ const FilteredPage = () => {
 
       // 添加选定的筛选条件
       selectedOptions.forEach((opt) => {
-        const key = label_options[opt as keyof typeof label_options];
-        if (key !== "") {
-          queryParams.append(key, "true");
-        }
+        queryParams.append(opt, "true");
       });
       if (location) {
         queryParams.append("latitude", location.latitude.toString());
@@ -106,6 +103,10 @@ const FilteredPage = () => {
         (position) => {
           setLocation(position.coords);
         },
+        () => {
+          console.warn("使用者未開啟定位功能");
+          setLocation(null); // 使用者未開啟定位功能
+        }
       );
     }
   }, []);
@@ -114,7 +115,7 @@ const FilteredPage = () => {
     if (selectedOptions.length > 0) {
       fetchFilteredCafes();
     }
-  }, [selectedOptions]);
+  }, [selectedOptions, location]);
 
   const searchParams = useSearchParams();
 
@@ -275,11 +276,10 @@ const FilteredPage = () => {
                 <div className="flex items-center space-x-3">
                   {/* Open status tag */}
                   <span
-                    className={`text-lg font-bold px-3 py-1 rounded ${
-                      cafe.isOpenNow
-                        ? "bg-green-500 text-white"
-                        : "bg-red-500 text-white"
-                    }`}
+                    className={`text-lg font-bold px-3 py-1 rounded ${cafe.isOpenNow
+                      ? "bg-green-500 text-white"
+                      : "bg-red-500 text-white"
+                      }`}
                   >
                     {cafe.isOpenNow ? "營業中" : "未營業"}
                   </span>
