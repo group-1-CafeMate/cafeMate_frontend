@@ -29,7 +29,6 @@ const HotSearchPage = () => {
   const cafesPerPage = 6;
   const totalPages = 1;
 
-
   useEffect(() => {
     if (typeof window !== "undefined" && navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
@@ -54,7 +53,7 @@ const HotSearchPage = () => {
           queryParams.append("latitude", location.latitude.toString());
           queryParams.append("longitude", location.longitude.toString());
         }
-        const targetUrl = `${API.Cafe.GetTopCafe}?${queryParams.toString()}`
+        const targetUrl = `${API.Cafe.GetTopCafe}?${queryParams.toString()}`;
         const response = await fetch(targetUrl, {
           method: "GET",
           credentials: "include",
@@ -143,6 +142,7 @@ const HotSearchPage = () => {
 
   return (
     <div className="min-h-screen bg-[#dfdad5] text-[#563517]">
+      {/* Navigation */}
       <div className="flex justify-between items-center px-6 py-4 bg-[#563517] text-white">
         <div className="flex space-x-6">
           <Link href="/homePage">
@@ -152,10 +152,11 @@ const HotSearchPage = () => {
         </div>
       </div>
 
+      {/* Introduction */}
       <div className="p-6">
         <h2 className="text-2xl font-bold mb-4">How to use it</h2>
         <div className="bg-[#6f4827] text-white p-6 rounded-lg">
-          <p className="text-xl leading-relaxed">
+          <p className="text-lg leading-relaxed">
             熱門推薦 Hot Search 讓你在漫無目的時能快速找到喜歡的咖啡廳，
             <br />
             CafeMate
@@ -164,6 +165,7 @@ const HotSearchPage = () => {
         </div>
       </div>
 
+      {/* Cafes List */}
       <div className="p-6">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {cafes.slice(0, cafesPerPage).map((cafe, index) => (
@@ -174,7 +176,7 @@ const HotSearchPage = () => {
                     Top {index + 1}
                   </div>
                 )}
-                <div className="relative w-full h-32 mb-4">
+                <div className="relative w-full h-40 mb-4">
                   <img
                     src={cafe.image_url}
                     alt={cafe.name}
@@ -184,41 +186,44 @@ const HotSearchPage = () => {
                 <div className="flex-grow">
                   {/* Cafe name and open status */}
                   <div className="flex justify-between items-center mb-4">
-                    <h3 className="text-xl font-bold">{cafe.name}</h3>
+                    <h3 className="text-lg font-bold truncate">{cafe.name}</h3>
                     <span
-                      className={`text-lg font-bold px-2 py-1 rounded ${cafe.isOpenNow
-                        ? "bg-green-500 text-white"
-                        : "bg-red-500 text-white"
-                        }`}
+                      className={`text-sm font-bold px-2 py-1 rounded whitespace-nowrap ${
+                        cafe.isOpenNow
+                          ? "bg-green-500 text-white"
+                          : "bg-red-500 text-white"
+                      }`}
                     >
                       {cafe.isOpenNow ? "營業中" : "未營業"}
                     </span>
                   </div>
                   {/* Rating */}
-                  <div className="flex items-center mb-4">
-                    <span className="text-2xl">{renderStars(cafe.rating)}</span>
-                    <span className="ml-2 text-2xl font-bold">
+                  <div className="flex items-center mb-2">
+                    <span className="text-sm">{renderStars(cafe.rating)}</span>
+                    <span className="ml-2 text-sm font-bold">
                       {cafe.rating.toFixed(1)}
                     </span>
                   </div>
                   {/* Labels */}
-                  <p className="mb-2 line-clamp-2">
+                  <p className="text-sm text-gray-700 truncate">
                     🏷️ {cafe.labels.join(", ")}
                   </p>
                   {/* Instagram post count */}
-                  <p className="font-bold mb-2">
-                    📸 IG上有 {formatIGPostCount(cafe.ig_post_count)} 個地點標註！
+                  <p className="text-sm font-bold mt-2">
+                    📸 IG上有 {formatIGPostCount(cafe.ig_post_count)}{" "}
+                    個地點標註！
                   </p>
                 </div>
-                <div className="absolute bottom-4 right-4 bg-[#724e2c] text-white px-3 py-1 rounded">
+                <div className="absolute bottom-4 right-4 bg-[#724e2c] text-white px-3 py-1 rounded text-sm">
                   {cafe.distance.toFixed(1)}km away from you
                 </div>
               </div>
             </Link>
           ))}
         </div>
+        {/* Pagination */}
         <div className="flex justify-center mt-6">
-          <span>Total Pages: {totalPages}</span>
+          <span className="text-sm">Total Pages: {totalPages}</span>
         </div>
       </div>
     </div>

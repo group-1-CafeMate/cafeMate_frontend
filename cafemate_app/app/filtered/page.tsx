@@ -1,5 +1,6 @@
 "use client";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
@@ -26,6 +27,7 @@ const FilteredPage = () => {
   const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
   const [remainingOptions, setRemainingOptions] = useState<string[]>([]);
   const [selectedStation, setSelectedStation] = useState<string | null>(null);
+  const [tempSelectedOptions, setTempSelectedOptions] = useState<string[]>([]);
   const [filteredCafes, setFilteredCafes] = useState<Cafe[]>([]);
   const [location, setLocation] = useState<GeolocationCoordinates | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -97,6 +99,22 @@ const FilteredPage = () => {
     });
   };
 
+  const renderStars = (rating: number): string => {
+    const fullStars = Math.floor(rating);
+    const hasHalfStar = rating % 1 >= 0.5;
+    const stars = [];
+
+    for (let i = 0; i < 5; i++) {
+      if (i < fullStars) {
+        stars.push("⭐"); // Full star
+      } else if (i === fullStars && hasHalfStar) {
+        stars.push("✭"); // Half star
+      } else {
+        stars.push("☆"); // Empty star
+      }
+    }
+    return stars.join("");
+  };
   useEffect(() => {
     if (typeof window !== "undefined" && navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
@@ -145,17 +163,20 @@ const FilteredPage = () => {
           )
       )
     );
+    setTempSelectedOptions(selected);
   }, [searchParams]);
 
   const toggleOption = (option: string) => {
     const optionKey = label_options[option as keyof typeof label_options];
 
-    if (selectedOptions.includes(optionKey)) {
-      setSelectedOptions(selectedOptions.filter((o) => o !== optionKey));
-      setRemainingOptions((prev) => [...prev, option]);
+    if (tempSelectedOptions.includes(optionKey)) {
+      // 如果已選，則從暫存狀態中移除
+      setTempSelectedOptions(
+        tempSelectedOptions.filter((o) => o !== optionKey)
+      );
     } else {
-      setSelectedOptions([...selectedOptions, optionKey]);
-      setRemainingOptions((prev) => prev.filter((o) => o !== option));
+      // 如果未選，則添加到暫存狀態
+      setTempSelectedOptions([...tempSelectedOptions, optionKey]);
     }
   };
 
@@ -184,7 +205,7 @@ const FilteredPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[#dfdad5] text-[#563517] text-lg">
+    <div className="min-h-screen bg-[#dfdad5] text-[#563517]">
       {/* Navigation */}
       <div className="flex justify-between items-center px-6 py-4 bg-[#563517] text-white">
         <div className="flex space-x-6">
@@ -210,8 +231,7 @@ const FilteredPage = () => {
         {/* 已選條件框 */}
         <div className="flex items-center gap-4 mb-6">
           <div className="flex flex-wrap gap-3 flex-1 bg-white p-4 border border-gray-400 rounded min-h-[56px]">
-            {selectedOptions.map((option) => {
-              // 找到 option 對應的中文標籤
+            {tempSelectedOptions.map((option) => {
               const label = Object.keys(label_options).find(
                 (key) =>
                   label_options[key as keyof typeof label_options] === option
@@ -231,7 +251,10 @@ const FilteredPage = () => {
 
           {/* Research Button */}
           <button
-            onClick={fetchFilteredCafes}
+            onClick={() => {
+              setSelectedOptions(tempSelectedOptions); // 將暫存狀態同步到正式狀態
+              fetchFilteredCafes(); // 調用篩選 API
+            }}
             className="bg-[#563517] text-white px-8 py-4 rounded-lg hover:bg-[#6f4827] text-lg"
           >
             再次查詢
@@ -240,15 +263,17 @@ const FilteredPage = () => {
 
         {/* 未選條件 */}
         <div className="flex flex-wrap gap-3 mb-6">
-          {remainingOptions.map((option) => (
-            <span
-              key={option}
-              className="bg-gray-200 text-[#563517] px-4 py-2 rounded-full text-lg cursor-pointer hover:bg-gray-300"
-              onClick={() => toggleOption(option)}
-            >
-              {option}
-            </span>
-          ))}
+          {remainingOptions
+            .filter((option) => !tempSelectedOptions.includes(option))
+            .map((option) => (
+              <span
+                key={option}
+                className="bg-gray-200 text-[#563517] px-4 py-2 rounded-full text-lg cursor-pointer hover:bg-gray-300"
+                onClick={() => toggleOption(option)}
+              >
+                {option}
+              </span>
+            ))}
         </div>
 
         {/* Filtered Cafes */}
@@ -257,51 +282,59 @@ const FilteredPage = () => {
             <Link
               href={`/cafeinfo/${cafe.cafe_id}`}
               key={cafe.cafe_id}
-              className="bg-white rounded-lg shadow-lg p-4 relative transform transition-transform hover:scale-105"
+              className="bg-white rounded-lg shadow-lg p-4 relative transform transition-transform hover:scale-105 h-[400px]"
             >
+              {/* 固定圖片大小 */}
               <img
-                src={cafe.image_url || "/placeholder-image.jpg"}
+                src={cafe.image_url || "/images/placeholder-image.jpg"}
                 alt={cafe.name}
-                className="w-full h-32 object-cover rounded-lg mb-4"
+                className="h-64 w-full object-cover rounded-lg mb-4"
               />
-              {/* 顯示「完全符合你的需求」 */}
+
+              {/* 完全符合需求標籤 */}
               {selectedOptions.every((opt) => cafe.labels.includes(opt)) && (
                 <div className="absolute top-0 left-0 bg-red-600 bg-opacity-80 text-white px-4 py-1 rounded-tl-lg">
                   完全符合你的需求
                 </div>
               )}
-              {/* Cafe name with isOpen & rating */}
-              <div className="flex justify-between items-center mb-2">
-                <h3 className="text-xl font-bold">{cafe.name}</h3>
-                <div className="flex items-center space-x-3">
-                  {/* Open status tag */}
-                  <span
-                    className={`text-lg font-bold px-3 py-1 rounded ${cafe.isOpenNow
+
+              {/* Cafe Details */}
+              <div className="flex justify-between items-center mb-4">
+                {/* Cafe Name */}
+                <h3 className="text-lg font-bold">{cafe.name}</h3>
+                {/* Open Status */}
+                <span
+                  className={`text-lg font-bold px-2 py-1 rounded whitespace-nowrap ${
+                    cafe.isOpenNow
                       ? "bg-green-500 text-white"
                       : "bg-red-500 text-white"
-                      }`}
-                  >
-                    {cafe.isOpenNow ? "營業中" : "未營業"}
-                  </span>
-                  {/* Rating */}
-                  <span className="text-lg text-gray-600 font-bold">
-                    ⭐ {cafe.rating.toFixed(1)}
-                  </span>
-                </div>
+                  }`}
+                >
+                  {cafe.isOpenNow ? "營業中" : "未營業"}
+                </span>
               </div>
 
-              {/* Display location as a link */}
-              <a
-                href={cafe.gmap_link || "#"}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-blue-500 underline mb-2 inline-block"
-              >
-                View on Google Maps
-              </a>
-              <p>🕒 {cafe.open_hour.join(", ")}</p>
-              <p>🏷️ {cafe.labels.length} 個符合標籤</p>
-              <div className="absolute bottom-4 right-4 bg-[#724e2c] text-white px-3 py-1 rounded">
+              {/* 星等評分 */}
+              <div className="flex items-center text-sm text-gray-600 -mt-1">
+                {renderStars(cafe.rating)}
+                <span className="ml-2 font-semibold">
+                  {cafe.rating.toFixed(1)}
+                </span>
+              </div>
+
+              {/* 額外資訊 */}
+              <p className="text-sm text-gray-700">
+                🏷️{" "}
+                {
+                  selectedOptions.filter((option) =>
+                    cafe.labels.includes(option)
+                  ).length
+                }{" "}
+                個符合篩選條件
+              </p>
+
+              {/* 距離 */}
+              <div className="absolute bottom-4 right-4 bg-[#724e2c] text-white px-3 py-1 rounded text-sm">
                 {cafe.distance.toFixed(1)}km away from you
               </div>
             </Link>

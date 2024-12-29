@@ -31,7 +31,7 @@ interface Cafe {
   }[]; // 新增營業時間
   gmap_link?: string;
   distance: number; //新增與用戶距離
-  image_url: string | null;
+  image_urls: string;
   isOpenNow?: boolean; // 是否營業
 }
 const HomePage = () => {
@@ -105,6 +105,23 @@ const HomePage = () => {
     });
   };
 
+  const renderStars = (rating: number): string => {
+    const fullStars = Math.floor(rating);
+    const hasHalfStar = rating % 1 >= 0.5;
+    const stars = [];
+
+    for (let i = 0; i < 5; i++) {
+      if (i < fullStars) {
+        stars.push("⭐"); // Full star
+      } else if (i === fullStars && hasHalfStar) {
+        stars.push("✭"); // Half star
+      } else {
+        stars.push("☆"); // Empty star
+      }
+    }
+    return stars.join("");
+  };
+
   useEffect(() => {
     const fetchAllCafes = async () => {
       const response = await fetch(API.Cafe.GetCafes, {
@@ -144,23 +161,23 @@ const HomePage = () => {
   const handleLogout = async () => {
     try {
       const response = await fetch(API.User.LogOut, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
-        credentials: 'include',
+        credentials: "include",
       });
 
       const data = await response.json();
       if (data.status === 200) {
         alert(data.message); // Show success message
-        router.push('/signIn'); // Redirect to signin page
+        router.push("/signIn"); // Redirect to signin page
       } else {
-        alert('Logout failed');
+        alert("Logout failed");
       }
     } catch (error) {
-      console.error('Error:', error);
-      alert('An error occurred during logout');
+      console.error("Error:", error);
+      alert("An error occurred during logout");
     }
   };
 
@@ -186,18 +203,17 @@ const HomePage = () => {
           Log Out
         </button>
       </div>
-
       {/* Search Section */}
-      <div className="p-8 sm:p-12 md:p-16 max-w-7xl mx-auto">
-        <h1 className="text-3xl sm:text-4xl font-bold text-center mb-8">
+      <div className="p-4 sm:p-6 md:p-8 max-w-7xl mx-auto">
+        <h1 className="text-3xl sm:text-2xl font-bold text-center mb-4">
           告訴我們你的需求，我們將幫你找到最佳的咖啡廳！
         </h1>
-        <div className="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-4 w-full">
+        <div className="flex flex-col sm:flex-row justify-center items-center space-y-2 sm:space-y-0 sm:space-x-2 w-full">
           {/* MRT Station Selector */}
           <select
             value={selectedStation}
             onChange={(e) => setSelectedStation(e.target.value)}
-            className="w-full sm:w-1/4 p-4 border border-gray-400 rounded focus:outline-none text-lg"
+            className="w-full sm:w-1/5 p-2 border border-gray-400 rounded focus:outline-none text-lg"
           >
             <option value="">選擇捷運站</option>
             {Object.entries(mrtLines).map(([line, stations]) => (
@@ -215,25 +231,26 @@ const HomePage = () => {
             type="text"
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
-            className="w-full sm:w-2/4 p-4 border border-gray-400 rounded focus:outline-none text-lg"
+            className="w-full sm:w-2/5 p-2 border border-gray-400 rounded focus:outline-none text-lg"
             placeholder="點擊下方條件輸入你的需求..."
           />
           <button
-            className="w-full sm:w-1/4 bg-[#563517] text-white px-8 py-4 rounded hover:bg-[#705636] text-lg transition-all duration-300"
+            className="w-full sm:w-1/5 bg-[#563517] text-white px-6 py-2 rounded hover:bg-[#705636] text-lg transition-all duration-300"
             onClick={handleSearch}
           >
             Search
           </button>
         </div>
 
-        <div className="flex flex-wrap justify-center gap-4 sm:gap-6 mt-8">
+        <div className="flex flex-wrap justify-center gap-2 sm:gap-4 mt-4">
           {Object.keys(label_options).map((option) => (
             <div
               key={option}
-              className={`flex items-center justify-center px-6 py-4 rounded-full cursor-pointer transition-all duration-300 text-lg transform hover:scale-110 ${selectedOptions.includes(option)
+              className={`flex items-center justify-center px-4 py-2 rounded-full cursor-pointer transition-all duration-300 text-lg transform hover:scale-105 ${
+                selectedOptions.includes(option)
                   ? "bg-green-500 text-white border-green-500"
                   : "bg-gray-200 text-gray-700 border-gray-300 hover:shadow-lg"
-                }`}
+              }`}
               onClick={() => handleOptionSelect(option)}
             >
               {selectedOptions.includes(option) && (
@@ -261,7 +278,7 @@ const HomePage = () => {
       {/* Cafes Section with Grid Layout */}
       <div className="bg-[#724e2c] text-white min-h-[70vh] flex flex-col justify-between">
         <div className="p-6 sm:p-8 flex-grow flex flex-col">
-          <h2 className="text-3xl sm:text-4xl font-bold mb-4 text-center">
+          <h2 className="text-2xl sm:text-2xl font-bold mb-4 text-center">
             我們為你收集了這些咖啡廳：
           </h2>
 
@@ -273,36 +290,34 @@ const HomePage = () => {
                 className="bg-white text-[#563517] p-6 rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300"
               >
                 {/* Cafe Image */}
-                {cafe.image_url ? (
-                  <div className="w-full h-64 relative mb-4">
-                    <img
-                      src={cafe.image_url}
-                      alt={cafe.name}
-                      className="w-full h-full object-cover rounded-lg"
-                    />
-                  </div>
-                ) : (
-                  <div className="w-full h-64 bg-gray-300 flex items-center justify-center rounded-lg">
-                    <p className="text-gray-500">無圖片</p>
-                  </div>
-                )}
+                <div className="w-full h-64 relative mb-4">
+                  <img
+                    src={cafe.images_urls[0]}
+                    alt={cafe.name}
+                    className="w-full h-full object-cover rounded-lg"
+                  />
+                </div>
 
                 {/* Cafe Details */}
-                <div className="flex justify-between items-center mb-4">
-                  <h3 className="text-2xl font-bold mt-4">{cafe.name}</h3>
-                  <div className="flex items-center space-x-2">
+                <div className="mb-4">
+                  <div className="flex justify-between items-center">
+                    {/* Cafe Name */}
+                    <h3 className="text-lg font-bold">{cafe.name}</h3>
+                    {/* Open/Closed Tag */}
                     <span
-                      className={`text-sm font-bold px-2 py-1 rounded ${cafe.isOpenNow
+                      className={`text-lg font-bold px-2 py-1 rounded whitespace-nowrap ${
+                        cafe.isOpenNow
                           ? "bg-green-500 text-white"
                           : "bg-red-500 text-white"
-                        }`}
+                      }`}
                     >
                       {cafe.isOpenNow ? "營業中" : "未營業"}
                     </span>
-                    <span className="text-xl text-gray-600 font-bold">
-                      ⭐ {cafe.rating.toFixed(1)}
-                    </span>
                   </div>
+                  {/* Star Rating */}
+                  <span className="text-sm text-gray-600 block">
+                    {renderStars(cafe.rating)} {cafe.rating.toFixed(1)}
+                  </span>
                 </div>
               </div>
             ))}
