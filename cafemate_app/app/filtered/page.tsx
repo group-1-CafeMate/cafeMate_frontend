@@ -105,11 +105,7 @@ const FilteredPage = () => {
       navigator.geolocation.getCurrentPosition(
         (position) => {
           setLocation(position.coords);
-          setError(null);
         },
-        (err) => {
-          setError(err.message);
-        }
       );
     }
   }, []);
