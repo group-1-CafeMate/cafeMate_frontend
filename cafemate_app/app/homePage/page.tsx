@@ -36,6 +36,14 @@ const HomePage = () => {
   const [location, setLocation] = useState<GeolocationCoordinates | null>(null);
   const [error, setError] = useState<string | null>(null);
 
+  const options = {
+    適合讀書: "work_and_study_friendly",
+    不限時: "time_unlimit",
+    有插座: "socket",
+    提供WiFi: "wifi",
+    營業中: "", // 營業中在由咖啡廳openhour在前端判斷
+    可帶寵物: "pets_allowed",
+  };
 
   useEffect(() => {
     if (typeof window !== "undefined" && navigator.geolocation) {
@@ -246,17 +254,16 @@ const HomePage = () => {
             className={`${activeTab === "homepage" ? "underline" : ""} hover:underline text-lg`}
             onClick={() => setActiveTab("homepage")}
           >
-            Homepage
+            首頁
           </button>
           <Link href="/hotsearch">
-            <button className="hover:underline text-lg">Hot Search</button>
+            <button className="hover:underline text-lg">熱門推薦</button>
           </Link>
         </div>
         <button className="bg-white text-[#563517] px-6 py-3 rounded hover:bg-gray-200 text-lg">
           Log Out
         </button>
       </div>
-
       {/* Search Bar */}
       <div className="p-8 sm:p-12 md:p-16 max-w-7xl mx-auto">
         <h1 className="text-3xl sm:text-4xl font-bold text-center mb-8">
@@ -282,10 +289,11 @@ const HomePage = () => {
           {Object.keys(label_options).map((option) => (
             <div
               key={option}
-              className={`flex items-center justify-center px-6 py-4 rounded-full cursor-pointer transition-all duration-300 text-lg transform hover:scale-110 ${selectedOptions.includes(option)
-                ? "bg-green-500 text-white border-green-500"
-                : "bg-gray-200 text-gray-700 border-gray-300 hover:shadow-lg"
-                }`}
+              className={`flex items-center justify-center px-6 py-4 rounded-full cursor-pointer transition-all duration-300 text-lg transform hover:scale-110 ${
+                selectedOptions.includes(option)
+                  ? "bg-green-500 text-white border-green-500"
+                  : "bg-gray-200 text-gray-700 border-gray-300 hover:shadow-lg"
+              }`}
               onClick={() => handleOptionSelect(option)}
             >
               {selectedOptions.includes(option) && (
