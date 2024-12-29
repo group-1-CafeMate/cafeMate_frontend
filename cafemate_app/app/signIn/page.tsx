@@ -1,4 +1,4 @@
-"use client"; // 加在檔案的第一行
+"use client";
 
 import Button from "components/Button";
 import { useRouter } from "next/navigation";
@@ -6,33 +6,78 @@ import React, { useState } from "react";
 import API from "src/constants/api";
 
 const SignIn = () => {
-  const [username, setUsername] = useState(""); // 儲存使用者名稱
-  const [password, setPassword] = useState(""); // 儲存密碼
-  const [error, setError] = useState(""); // 儲存錯誤訊息
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
+  const [isForgotPassword, setIsForgotPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
-  // 發送登入請求的函數
-  const handleSignIn = async () => {
+
+  const handleForgotPassword = async () => {
+    if (isLoading) return;
+    
+    setError("");
+    setSuccessMessage("");
+
+    if (!username.trim()) {
+      setError("請先提供使用者名稱！");
+      return;
+    }
+
+    setIsLoading(true);
+    setSuccessMessage("寄送郵件中...");
+
     try {
-      // 向後端發送 POST 請求
-      const response = await fetch(API.User.Login, {
-        method: "POST", // HTTP 請求方法
+      const response = await fetch(API.User.ForgotPassword, {
+        method: "POST",
         headers: {
-          "Content-Type": "application/json", // 設定內容類型為 JSON
+          "Content-Type": "application/json",
         },
-        credentials: 'include',
-        body: JSON.stringify({ username, password }), // 將使用者名稱與密碼轉為 JSON 傳送
+        body: JSON.stringify({ username: username.trim() }),
       });
 
-      const data = await response.json(); // 解析後端回應的 JSON
+      const data = await response.json();
 
       if (response.ok) {
-        // 可以在這裡執行跳轉頁面或儲存全域狀態的操作
+        setSuccessMessage("新密碼已發送至您的電子郵件！");
+        setTimeout(() => {
+          setIsForgotPassword(false);
+          setSuccessMessage("");
+        }, 3000);
+      } else {
+        setError(data.message || "發送失敗，請確認用戶名稱是否正確！");
+        setSuccessMessage("");
+      }
+    } catch (error) {
+      setError("網路錯誤，請稍後再試！");
+      setSuccessMessage("");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleSignIn = async () => {
+    setError("");
+    try {
+      const response = await fetch(API.User.Login, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: 'include',
+        body: JSON.stringify({ username, password }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
         router.push("/homePage");
       } else {
         setError(data.message || "登入失敗");
       }
     } catch {
-      setError("網絡錯誤，請稍後再試！");
+      setError("網路錯誤，請稍後再試！");
     }
   };
 
@@ -47,7 +92,6 @@ const SignIn = () => {
           }}
         >
           <div className="p-8 flex flex-col justify-center items-center bg-black bg-opacity-50 text-white text-center h-full">
-            {/* 左側內容 */}
             <h1 className="text-3xl font-bold mb-4">
               We haven&apos;t met before right?
             </h1>
@@ -107,9 +151,17 @@ const SignIn = () => {
             </div>
             {error && <p className="text-red-500 text-sm">{error}</p>}
             <div className="text-right">
-              <a href="#" className="text-sm text-gray-500 hover:underline">
+              <button
+                className="text-sm text-gray-500 hover:underline"
+                onClick={(e) => {
+                  e.preventDefault();
+                  setError("");
+                  setSuccessMessage("");
+                  setIsForgotPassword(true);
+                }}
+              >
                 忘記密碼？
-              </a>
+              </button>
             </div>
             <div className="mt-4 flex justify-center">
               <Button
@@ -120,9 +172,48 @@ const SignIn = () => {
               />
             </div>
           </form>
+
+          {/* 忘記密碼彈窗 */}
+          {isForgotPassword && (
+            <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+              <div className="bg-white p-6 rounded-lg shadow-lg w-[90%] max-w-md">
+                <h3 className="text-lg font-bold mb-4">忘記密碼</h3>
+                <p className="text-sm text-gray-600 mb-4">
+                  請提供您的使用者名稱，我們將寄送新密碼至您的信箱
+                </p>
+                {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
+                {successMessage && (
+                  <p className="text-green-500 text-sm mb-4">{successMessage}</p>
+                )}
+                <div className="flex justify-end space-x-4">
+                  <button
+                    onClick={() => {
+                      if (!isLoading) {
+                        setIsForgotPassword(false);
+                        setError("");
+                        setSuccessMessage("");
+                      }
+                    }}
+                    className={`text-gray-500 hover:underline ${
+                      isLoading ? 'opacity-50' : ''
+                    }`}
+                  >
+                    取消
+                  </button>
+                  <Button
+                    label={isLoading ? "處理中..." : "發送重設連結"}
+                    variant="solid"
+                    onClick={handleForgotPassword}
+                    className={isLoading ? 'opacity-50' : ''}
+                  />
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>
   );
 };
+
 export default SignIn;
