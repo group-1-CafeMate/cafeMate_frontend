@@ -6,15 +6,19 @@ import Link from "next/link";
 interface Cafe {
   cafe_id: string;
   name: string;
-  image_url: string;
+  image_url: string | null;
   rating: number;
+  open_hour: {
+    day_of_week: string;
+    open_time: string;
+    close_time: string;
+  }[];
   distance: number;
   labels: string[];
-  gmap_link: string;
-  ig_post_cnt: number;
-  addr: string;
+  gmap_link?: string;
+  isOpenNow?: boolean; // 是否營業中
+  ig_post_cnt?: number; // IG post count
 }
-
 const HotSearchPage = () => {
   const [cafes, setCafes] = useState<Cafe[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -41,7 +45,30 @@ const HotSearchPage = () => {
           throw new Error("No cafe data received");
         }
 
-        setCafes(data.cafes);
+        // 檢查營業狀態的邏輯
+        const now = new Date();
+        const currentDay = `星期${["日", "一", "二", "三", "四", "五", "六"][now.getDay()]}`;
+        const currentTime = `${String(now.getHours()).padStart(2, "0")}:${String(
+          now.getMinutes()
+        ).padStart(2, "0")}`;
+
+        const cafesWithOpenStatus = data.cafes.map((cafe: Cafe) => {
+          const isOpenNow = cafe.open_hour.some((schedule) => {
+            if (schedule.day_of_week === currentDay) {
+              const { open_time, close_time } = schedule;
+              if (open_time === "休息" || close_time === "休息") return false;
+              return currentTime >= open_time && currentTime <= close_time;
+            }
+            return false;
+          });
+
+          return {
+            ...cafe,
+            isOpenNow, // 加入是否營業的屬性
+          };
+        });
+
+        setCafes(cafesWithOpenStatus);
         setIsLoading(false);
       } catch (err) {
         setError(err instanceof Error ? err.message : "An error occurred");
@@ -119,7 +146,7 @@ const HotSearchPage = () => {
             <Link href={`/cafe/${cafe.cafe_id}`} key={cafe.cafe_id}>
               <div className="bg-white rounded-lg shadow-lg p-4 relative transform transition-transform hover:scale-105 h-[400px] flex flex-col">
                 {index < 3 && (
-                  <div className="absolute top-0 left-0 bg-red-600 bg-opacity-80 text-white text-opacity-70 px-4 py-3 rounded-tl-lg text-lg font-bold z-10">
+                  <div className="absolute top-0 left-0 bg-red-600 bg-opacity-80 text-white px-4 py-3 rounded-tl-lg text-lg font-bold z-10">
                     Top {index + 1}
                   </div>
                 )}
@@ -131,26 +158,31 @@ const HotSearchPage = () => {
                   />
                 </div>
                 <div className="flex-grow">
-                  <div className="flex justify-between items-center mb-2">
+                  {/* Cafe name and open status */}
+                  <div className="flex justify-between items-center mb-4">
                     <h3 className="text-xl font-bold">{cafe.name}</h3>
+                    <span
+                      className={`text-lg font-bold px-2 py-1 rounded ${
+                        cafe.isOpenNow
+                          ? "bg-green-500 text-white"
+                          : "bg-red-500 text-white"
+                      }`}
+                    >
+                      {cafe.isOpenNow ? "營業中" : "未營業"}
+                    </span>
                   </div>
-                  <div className="flex items-center mb-2">
-                    <span className="text-lg">{renderStars(cafe.rating)}</span>
-                    <span className="ml-2 text-lg font-bold">
+                  {/* Rating */}
+                  <div className="flex items-center mb-4">
+                    <span className="text-2xl">{renderStars(cafe.rating)}</span>
+                    <span className="ml-2 text-2xl font-bold">
                       {cafe.rating.toFixed(1)}
                     </span>
                   </div>
-                  <a
-                    href={cafe.gmap_link}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-blue-500 hover:underline mb-2 block line-clamp-2"
-                  >
-                    📍 {cafe.addr}
-                  </a>
+                  {/* Labels */}
                   <p className="mb-2 line-clamp-2">
                     🏷️ {cafe.labels.join(", ")}
                   </p>
+                  {/* Instagram post count */}
                   <p className="font-bold mb-2">
                     📸 IG上有 {formatIGPostCount(cafe.ig_post_cnt)} 個地點標註！
                   </p>
