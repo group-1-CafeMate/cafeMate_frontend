@@ -27,12 +27,24 @@ const SignUp: React.FC = () => {
       const data = await response.json(); // 解析後端回應的 JSON
 
       if (response.ok) {
-        setSuccess("註冊成功！歡迎加入！");
-        setError(""); // 清除錯誤訊息
-        router.push("/signIn");
+        setSuccess("註冊成功！驗證信已發送到您的電子郵件！");
+        setError("");
+
+        // 發送驗證信
+        await fetch(API.User.SendVerificationEmail, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ name: username, email }),
+        });
+
+        setTimeout(() => {
+          router.push("/signIn");
+        }, 2000); // 延遲導航以便顯示成功訊息
       } else {
         setError(data.message || "註冊失敗");
-        setSuccess(""); // 清除成功訊息
+        setSuccess("");
       }
     } catch (err) {
       setError("網絡錯誤，請稍後再試！");
