@@ -1,9 +1,9 @@
 "use client";
-import React, { useState, useEffect } from "react";
-import Link from "next/link";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import API from "src/constants/api";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
+import React, { useEffect, useState } from "react";
+import API from "src/constants/api";
 
 interface Cafe {
   cafe_id: string;
@@ -31,16 +31,11 @@ const FilteredPage = () => {
     setError(null);
 
     try {
-      const queryParams = new URLSearchParams();
-      selectedOptions.forEach((option) => {
-        queryParams.append(option, "true");
-      });
-
+      // 取得目前網址的query params
+      const currentParams = new URLSearchParams(window.location.search);
       const baseUrl = API.Cafe.GetFilteredCafe;
-      const location = { latitude: 24.9878632, longitude: 121.5748555 }; // Mock location
-      const loc = `latitude=${location.latitude}&longitude=${location.longitude}`;
-      const fullUrl = `${baseUrl}?${loc}&${queryParams.toString()}`;
-
+      const fullUrl = `${baseUrl}?${currentParams.toString()}`;
+      console.log(fullUrl);
       const response = await fetch(fullUrl, {
         method: "GET",
         credentials: "include",
