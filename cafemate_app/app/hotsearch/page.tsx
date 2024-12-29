@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import React, { useEffect, useState } from "react";
 
 interface Cafe {
   cafe_id: string;
@@ -17,7 +17,7 @@ interface Cafe {
   labels: string[];
   gmap_link?: string;
   isOpenNow?: boolean; // 是否營業中
-  ig_post_cnt?: number; // IG post count
+  ig_post_count?: number; // IG post count
 }
 const HotSearchPage = () => {
   const [cafes, setCafes] = useState<Cafe[]>([]);
@@ -162,11 +162,10 @@ const HotSearchPage = () => {
                   <div className="flex justify-between items-center mb-4">
                     <h3 className="text-xl font-bold">{cafe.name}</h3>
                     <span
-                      className={`text-lg font-bold px-2 py-1 rounded ${
-                        cafe.isOpenNow
-                          ? "bg-green-500 text-white"
-                          : "bg-red-500 text-white"
-                      }`}
+                      className={`text-lg font-bold px-2 py-1 rounded ${cafe.isOpenNow
+                        ? "bg-green-500 text-white"
+                        : "bg-red-500 text-white"
+                        }`}
                     >
                       {cafe.isOpenNow ? "營業中" : "未營業"}
                     </span>
@@ -184,7 +183,7 @@ const HotSearchPage = () => {
                   </p>
                   {/* Instagram post count */}
                   <p className="font-bold mb-2">
-                    📸 IG上有 {formatIGPostCount(cafe.ig_post_cnt)} 個地點標註！
+                    📸 IG上有 {formatIGPostCount(cafe.ig_post_count)} 個地點標註！
                   </p>
                 </div>
                 <div className="absolute bottom-4 right-4 bg-[#724e2c] text-white px-3 py-1 rounded">
