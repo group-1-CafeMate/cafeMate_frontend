@@ -141,6 +141,29 @@ const HomePage = () => {
     setInputValue(newSelectedOptions.join(" "));
   };
 
+  const handleLogout = async () => {
+    try {
+      const response = await fetch(API.User.LogOut, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+      });
+
+      const data = await response.json();
+      if (data.status === 200) {
+        alert(data.message); // Show success message
+        router.push('/signIn'); // Redirect to signin page
+      } else {
+        alert('Logout failed');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      alert('An error occurred during logout');
+    }
+  };
+
   return (
     <div className="min-h-screen bg-[#dfdad5] text-[#563517]">
       {/* Navigation Bar */}
@@ -156,7 +179,10 @@ const HomePage = () => {
             <button className="hover:underline text-lg">熱門推薦</button>
           </Link>
         </div>
-        <button className="bg-white text-[#563517] px-6 py-3 rounded hover:bg-gray-200 text-lg">
+        <button
+          className="bg-white text-[#563517] px-6 py-3 rounded hover:bg-gray-200 text-lg"
+          onClick={handleLogout}
+        >
           Log Out
         </button>
       </div>
