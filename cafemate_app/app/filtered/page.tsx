@@ -6,6 +6,13 @@ import React, { useEffect, useState } from "react";
 import API from "src/constants/api";
 import { label_options } from "src/constants/label_options";
 
+function findKeyByValue(value: string) {
+  const values = Object.values(label_options);
+  const keys = Object.keys(label_options);
+  const index = values.indexOf(value);
+  return index !== -1 ? keys[index] : null;
+}
+
 interface Cafe {
   cafe_id: string;
   name: string;
@@ -158,7 +165,7 @@ const FilteredPage = () => {
                 className="bg-[#6f4827] text-white px-4 py-2 rounded-full text-lg cursor-pointer hover:bg-[#7d553a]"
                 onClick={() => toggleOption(option)}
               >
-                {option} ×
+                {findKeyByValue(option)}
               </span>
             ))}
           </div>
@@ -179,7 +186,7 @@ const FilteredPage = () => {
               className="bg-gray-200 text-[#563517] px-4 py-2 rounded-full text-lg cursor-pointer hover:bg-gray-300"
               onClick={() => toggleOption(option)}
             >
-              {option}
+              {findKeyByValue(option)}
             </span>
           ))}
         </div>
