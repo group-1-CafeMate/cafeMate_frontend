@@ -3,8 +3,8 @@
 import dynamic from "next/dynamic";
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import API from "src/constants/api";
 
 const Splide = dynamic(
@@ -35,14 +35,14 @@ const HomePage = () => {
   const [location, setLocation] = useState<GeolocationCoordinates | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  const options = [
-    "適合讀書",
-    "不限時",
-    "有插座",
-    "提供WiFi",
-    "營業中",
-    "可帶寵物",
-  ];
+  const options = {
+    "適合讀書": "work_and_study_friendly",
+    "不限時": "time_unlimit",
+    "有插座": "socket",
+    "提供WiFi": "wifi",
+    "營業中": "", // 營業中在由咖啡廳openhour在前端判斷
+    "可帶寵物": "pets_allowed",
+  };
 
   useEffect(() => {
     if (typeof window !== "undefined" && navigator.geolocation) {
@@ -63,8 +63,11 @@ const HomePage = () => {
     const queryParams = new URLSearchParams();
 
     // 添加选定的筛选条件
-    selectedOptions.forEach((option) => {
-      queryParams.append(option, "true");
+    selectedOptions.forEach((opt) => {
+      const key = options[opt as keyof typeof options];
+      if (key !== "") {
+        queryParams.append(key, "true");
+      }
     });
 
     // 如果有地理位置，添加经纬度
@@ -97,7 +100,7 @@ const HomePage = () => {
   }, [location]);
 
   // 處理篩選條件選擇
-  const handleOptionSelect = (option) => {
+  const handleOptionSelect = (option: string) => {
     const newSelectedOptions = selectedOptions.includes(option)
       ? selectedOptions.filter((o) => o !== option)
       : [...selectedOptions, option];
@@ -283,14 +286,13 @@ const HomePage = () => {
         </div>
 
         <div className="flex flex-wrap justify-center gap-4 sm:gap-6 mt-8">
-          {options.map((option) => (
+          {Object.keys(options).map((option) => (
             <div
               key={option}
-              className={`flex items-center justify-center px-6 py-4 rounded-full cursor-pointer transition-all duration-300 text-lg transform hover:scale-110 ${
-                selectedOptions.includes(option)
-                  ? "bg-green-500 text-white border-green-500"
-                  : "bg-gray-200 text-gray-700 border-gray-300 hover:shadow-lg"
-              }`}
+              className={`flex items-center justify-center px-6 py-4 rounded-full cursor-pointer transition-all duration-300 text-lg transform hover:scale-110 ${selectedOptions.includes(option)
+                ? "bg-green-500 text-white border-green-500"
+                : "bg-gray-200 text-gray-700 border-gray-300 hover:shadow-lg"
+                }`}
               onClick={() => handleOptionSelect(option)}
             >
               {selectedOptions.includes(option) && (
