@@ -56,7 +56,7 @@ const HomePage = () => {
           setError(null);
         },
         (err) => {
-          setError(err.message);
+          console.log(err.message);
         }
       );
     }
@@ -230,11 +230,10 @@ const HomePage = () => {
           {Object.keys(label_options).map((option) => (
             <div
               key={option}
-              className={`flex items-center justify-center px-6 py-4 rounded-full cursor-pointer transition-all duration-300 text-lg transform hover:scale-110 ${
-                selectedOptions.includes(option)
+              className={`flex items-center justify-center px-6 py-4 rounded-full cursor-pointer transition-all duration-300 text-lg transform hover:scale-110 ${selectedOptions.includes(option)
                   ? "bg-green-500 text-white border-green-500"
                   : "bg-gray-200 text-gray-700 border-gray-300 hover:shadow-lg"
-              }`}
+                }`}
               onClick={() => handleOptionSelect(option)}
             >
               {selectedOptions.includes(option) && (
@@ -293,11 +292,10 @@ const HomePage = () => {
                   <h3 className="text-2xl font-bold mt-4">{cafe.name}</h3>
                   <div className="flex items-center space-x-2">
                     <span
-                      className={`text-sm font-bold px-2 py-1 rounded ${
-                        cafe.isOpenNow
+                      className={`text-sm font-bold px-2 py-1 rounded ${cafe.isOpenNow
                           ? "bg-green-500 text-white"
                           : "bg-red-500 text-white"
-                      }`}
+                        }`}
                     >
                       {cafe.isOpenNow ? "營業中" : "未營業"}
                     </span>

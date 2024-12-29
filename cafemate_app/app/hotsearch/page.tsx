@@ -24,15 +24,38 @@ const HotSearchPage = () => {
   const [cafes, setCafes] = useState<Cafe[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [location, setLocation] = useState<GeolocationCoordinates | null>(null);
 
   const cafesPerPage = 6;
   const totalPages = 1;
+
+
+  useEffect(() => {
+    if (typeof window !== "undefined" && navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setLocation(position.coords);
+          setError(null);
+        },
+        (err) => {
+          console.warn(err.message);
+          setLocation(null);
+        }
+      );
+    }
+  }, []);
 
   useEffect(() => {
     const fetchTopCafes = async () => {
       setIsLoading(true);
       try {
-        const response = await fetch(API.Cafe.GetTopCafe, {
+        const queryParams = new URLSearchParams();
+        if (location) {
+          queryParams.append("latitude", location.latitude.toString());
+          queryParams.append("longitude", location.longitude.toString());
+        }
+        const targetUrl = `${API.Cafe.GetTopCafe}?${queryParams.toString()}`
+        const response = await fetch(targetUrl, {
           method: "GET",
           credentials: "include",
         });
@@ -78,7 +101,7 @@ const HotSearchPage = () => {
     };
 
     fetchTopCafes();
-  }, []);
+  }, [location]);
 
   const formatIGPostCount = (count: number | undefined): string => {
     if (count === undefined) return "N/A";
