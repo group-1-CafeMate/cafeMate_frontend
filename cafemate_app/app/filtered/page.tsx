@@ -28,8 +28,6 @@ const FilteredPage = () => {
   const cafesPerPage = 9;
   const router = useRouter();
 
-
-
   const fetchFilteredCafes = async () => {
     setIsLoading(true);
     setError(null);
@@ -74,11 +72,7 @@ const FilteredPage = () => {
       navigator.geolocation.getCurrentPosition(
         (position) => {
           setLocation(position.coords);
-          setError(null);
         },
-        (err) => {
-          setError(err.message);
-        }
       );
     }
   }, []);
