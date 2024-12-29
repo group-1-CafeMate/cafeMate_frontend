@@ -1,11 +1,11 @@
 "use client";
-
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import API from "src/constants/api";
+import { label_options } from "src/constants/label_options";
 
-// interface 是 TypeScript 用來定義物件結構的工具，幫助描述這些物件應該包含的屬性和屬性類型。
 interface Cafe {
   cafe_id: string;
   name: string;
@@ -14,44 +14,57 @@ interface Cafe {
   open_hour: string[];
   distance: number;
   labels: string[];
-  gmap_link?: string; // optional link，"?"代表是可選
+  gmap_link?: string;
 }
 
 const FilteredPage = () => {
-  const [selectedOptions, setSelectedOptions] = useState<string[]>([]); // useState 管理狀態，確保篩選標籤、當前頁面等數據即時更新。
+  const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
+  const [remainingOptions, setRemainingOptions] = useState<string[]>([]);
   const [filteredCafes, setFilteredCafes] = useState<Cafe[]>([]);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string>("");
-  const [inputValue, setInputValue] = useState<string>("");
   const [location, setLocation] = useState<GeolocationCoordinates | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const cafesPerPage = 9;
+  const router = useRouter();
 
-  const options = [
-    "work_and_study_friendly",
-    "time_unlimit",
-    "socket",
-    "wifi",
-    "pets_allowed",
-  ];
+  const fetchFilteredCafes = async () => {
+    setIsLoading(true);
+    setError(null);
 
-  const cafesPerPage = 6;
-  const totalPages = Math.ceil((filteredCafes?.length || 0) / cafesPerPage);
+    try {
+      // 取得目前網址的query params
+      const queryParams = new URLSearchParams();
 
-  const getCurrentPageCafes = () => {
-    const startIndex = (currentPage - 1) * cafesPerPage;
-    return filteredCafes.slice(startIndex, startIndex + cafesPerPage) || [];
-  };
+      // 添加选定的筛选条件
+      selectedOptions.forEach((opt) => {
+        const key = label_options[opt as keyof typeof label_options];
+        if (key !== "") {
+          queryParams.append(key, "true");
+        }
+      });
+      if (location) {
+        queryParams.append("latitude", location.latitude.toString());
+        queryParams.append("longitude", location.longitude.toString());
+      }
+      const baseUrl = API.Cafe.GetFilteredCafe;
+      const fullUrl = `${baseUrl}?${queryParams.toString()}`;
+      const response = await fetch(fullUrl, {
+        method: "GET",
+        credentials: "include",
+      });
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setInputValue(e.target.value);
-  };
-
-  const toggleOption = (option: string) => {
-    setSelectedOptions((prev) =>
-      prev.includes(option)
-        ? prev.filter((item) => item !== option)
-        : [...prev, option]
-    );
+      if (response.ok) {
+        const data = await response.json();
+        setFilteredCafes(data.cafes);
+      } else {
+        setError("無法獲取篩選結果，請稍後再試。");
+      }
+    } catch (error) {
+      setError("無法獲取篩選結果，請稍後再試。");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -59,68 +72,57 @@ const FilteredPage = () => {
       navigator.geolocation.getCurrentPosition(
         (position) => {
           setLocation(position.coords);
-          setError("");
         },
-        (err) => {
-          setError(err.message);
-        }
       );
     }
   }, []);
 
-  const fetchCafes = async () => {
-    setIsLoading(true);
-    setError("");
+  useEffect(() => {
+    if (selectedOptions.length > 0) {
+      fetchFilteredCafes();
+    }
+  }, [selectedOptions]);
 
-    try {
-      // 構建 query string
-      const queryParams = new URLSearchParams();
-      selectedOptions.forEach((option) => {
-        queryParams.append(option, "true");
-      });
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const selected: string[] = [];
 
-      const baseUrl = API.Cafe.GetFilteredCafe;
-      const query = location
-        ? `?latitude=${location.latitude}&longitude=${location.longitude}`
-        : "";
-
-      // 從 API 獲取數據
-      const response = await fetch(
-        baseUrl + query,
-        {
-          method: "GET",
-          credentials: "include", // 搭配後端 @login_required，用來傳遞身分驗證的 Cookie
-        }
-      );
-
-      console.log("Response status: ", response.status);
-      // console.log("Response body: ", await response.text()); // 检查返回的原始内容
-
-      if (response.ok) {
-        const data = await response.json();
-        setFilteredCafes(data.cafes || []);
-      } else {
-        const errorData = await response.json();
-        setError(errorData.message || "Failed to fetch cafes");
+    params.forEach((value, key) => {
+      if (value === "true") {
+        selected.push(key); // 只加入值為 true 的 key
       }
-    } catch (err) {
-      setError("Network error. Please try again.");
-    } finally {
-      setIsLoading(false);
+    });
+
+    setSelectedOptions(selected);
+    setRemainingOptions((prev) =>
+      Object.values(label_options).filter(
+        (option) => option && !selected.includes(option)
+      )
+    );
+  }, [window.location.search]);
+
+  const toggleOption = (option: string) => {
+    if (selectedOptions.includes(option)) {
+      setSelectedOptions(selectedOptions.filter((o) => o !== option));
+      setRemainingOptions([...remainingOptions, option]);
+    } else {
+      setSelectedOptions([...selectedOptions, option]);
+      setRemainingOptions(remainingOptions.filter((o) => o !== option));
     }
   };
 
-  // useEffect 用來選擇篩選標籤時自動重新載入咖啡廳資料。
-  // 運作邏輯：
-  // 當 selectedOptions 發生變化時，觸發 fetchCafes，重新向後端請求篩選的數據。
-  useEffect(() => {
-    fetchCafes();
-  }, [selectedOptions]);
+  const getCurrentPageCafes = () => {
+    const startIndex = (currentPage - 1) * cafesPerPage;
+    const endIndex = startIndex + cafesPerPage;
+    return filteredCafes.slice(startIndex, endIndex);
+  };
+
+  const totalPages = Math.ceil(filteredCafes.length / cafesPerPage);
 
   if (isLoading) {
     return (
       <div className="min-h-screen bg-[#dfdad5] flex items-center justify-center">
-        <div className="text-[#563517] text-xl">載入中...</div>
+        <div className="text-[#563517] text-2xl">載入中...</div>
       </div>
     );
   }
@@ -128,14 +130,14 @@ const FilteredPage = () => {
   if (error) {
     return (
       <div className="min-h-screen bg-[#dfdad5] flex items-center justify-center">
-        <div className="text-red-600 text-xl">{error}</div>
+        <div className="text-red-600 text-2xl">{error}</div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#dfdad5] text-[#563517]">
-      {/* Navigation Bar */}
+    <div className="min-h-screen bg-[#dfdad5] text-[#563517] text-lg">
+      {/* Navigation */}
       <div className="flex justify-between items-center px-6 py-4 bg-[#563517] text-white">
         <div className="flex space-x-6">
           <button className="underline hover:underline">Filtered</button>
@@ -145,33 +147,41 @@ const FilteredPage = () => {
 
       {/* Results Header */}
       <div className="p-6">
-        <h2 className="text-2xl font-bold mb-4">Here are your results:</h2>
+        <h2 className="text-3xl font-bold mb-6">篩選結果如下：</h2>
 
-        {/* Display Selected Options */}
-        <div className="mb-6">
-          <h3 className="text-lg font-medium">Selected Labels:</h3>
-          <div className="flex flex-wrap gap-2 mt-2">
-            {selectedOptions.map((option, index) => (
+        {/* 已選條件框 */}
+        <div className="flex items-center gap-4 mb-6">
+          <div className="flex flex-wrap gap-3 flex-1 bg-white p-4 border border-gray-400 rounded min-h-[56px]">
+            {selectedOptions.map((option) => (
               <span
-                key={index}
-                className="bg-[#6f4827] text-white px-3 py-1 rounded-full text-sm cursor-pointer"
+                key={option}
+                className="bg-[#6f4827] text-white px-4 py-2 rounded-full text-lg cursor-pointer hover:bg-[#7d553a]"
                 onClick={() => toggleOption(option)}
               >
-                {option}
+                {option} ×
               </span>
             ))}
           </div>
+          {/* Research Button */}
+          <button
+            onClick={fetchFilteredCafes}
+            className="bg-[#563517] text-white px-8 py-4 rounded-lg hover:bg-[#6f4827] text-lg"
+          >
+            再次查詢
+          </button>
         </div>
 
-        {/* Input Box for Adding Options */}
-        <div className="flex justify-center items-center space-x-4 mb-6">
-          <input
-            type="text"
-            value={inputValue}
-            onChange={handleInputChange}
-            className="w-2/3 p-3 border border-gray-400 rounded focus:outline-none"
-            placeholder="輸入你的需求..."
-          />
+        {/* 未選條件 */}
+        <div className="flex flex-wrap gap-3 mb-6">
+          {remainingOptions.map((option) => (
+            <span
+              key={option}
+              className="bg-gray-200 text-[#563517] px-4 py-2 rounded-full text-lg cursor-pointer hover:bg-gray-300"
+              onClick={() => toggleOption(option)}
+            >
+              {option}
+            </span>
+          ))}
         </div>
 
         {/* Filtered Cafes */}
@@ -187,7 +197,6 @@ const FilteredPage = () => {
                 alt={cafe.name}
                 className="w-full h-32 object-cover rounded-lg mb-4"
               />
-
               {/* Cafe name with rating */}
               <div className="flex justify-between items-center mb-2">
                 <h3 className="text-xl font-bold">{cafe.name}</h3>
@@ -195,17 +204,15 @@ const FilteredPage = () => {
                   ⭐ {cafe.rating.toFixed(1)}
                 </span>
               </div>
-
               {/* Display location as a link */}
-              <span
+              <a
                 href={cafe.gmap_link || "#"}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-blue-500 underline mb-2 inline-block"
               >
                 View on Google Maps
-              </span>
-
+              </a>
               <p>🕒 {cafe.open_hour.join(", ")}</p>
               <p>🏷️ {cafe.labels.length} 個符合標籤</p>
               <div className="absolute bottom-4 right-4 bg-[#724e2c] text-white px-3 py-1 rounded">
