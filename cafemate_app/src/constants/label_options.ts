@@ -1,4 +1,4 @@
-const label_options = {
+export const label_options = {
   "適合讀書": "work_and_study_friendly",
   "不限時": "time_unlimit",
   "有插座": "socket",

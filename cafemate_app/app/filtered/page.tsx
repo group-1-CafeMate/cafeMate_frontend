@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import API from "src/constants/api";
+import { label_options } from "src/constants/label_options";
 
 interface Cafe {
   cafe_id: string;
@@ -20,11 +21,14 @@ const FilteredPage = () => {
   const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
   const [remainingOptions, setRemainingOptions] = useState<string[]>([]);
   const [filteredCafes, setFilteredCafes] = useState<Cafe[]>([]);
+  const [location, setLocation] = useState<GeolocationCoordinates | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const cafesPerPage = 9;
   const router = useRouter();
+
+
 
   const fetchFilteredCafes = async () => {
     setIsLoading(true);
@@ -32,10 +36,21 @@ const FilteredPage = () => {
 
     try {
       // 取得目前網址的query params
-      const currentParams = new URLSearchParams(window.location.search);
+      const queryParams = new URLSearchParams();
+
+      // 添加选定的筛选条件
+      selectedOptions.forEach((opt) => {
+        const key = label_options[opt as keyof typeof label_options];
+        if (key !== "") {
+          queryParams.append(key, "true");
+        }
+      });
+      if (location) {
+        queryParams.append("latitude", location.latitude.toString());
+        queryParams.append("longitude", location.longitude.toString());
+      }
       const baseUrl = API.Cafe.GetFilteredCafe;
-      const fullUrl = `${baseUrl}?${currentParams.toString()}`;
-      console.log(fullUrl);
+      const fullUrl = `${baseUrl}?${queryParams.toString()}`;
       const response = await fetch(fullUrl, {
         method: "GET",
         credentials: "include",
@@ -55,19 +70,42 @@ const FilteredPage = () => {
   };
 
   useEffect(() => {
+    if (typeof window !== "undefined" && navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setLocation(position.coords);
+          setError(null);
+        },
+        (err) => {
+          setError(err.message);
+        }
+      );
+    }
+  }, []);
+
+  useEffect(() => {
     if (selectedOptions.length > 0) {
       fetchFilteredCafes();
     }
   }, [selectedOptions]);
 
   useEffect(() => {
-    const params = new URLSearchParams(router.query as Record<string, string>);
-    const selected = Array.from(params.keys());
+    const params = new URLSearchParams(window.location.search);
+    const selected: string[] = [];
+
+    params.forEach((value, key) => {
+      if (value === "true") {
+        selected.push(key); // 只加入值為 true 的 key
+      }
+    });
+
     setSelectedOptions(selected);
     setRemainingOptions((prev) =>
-      prev.filter((option) => !selected.includes(option))
+      Object.values(label_options).filter(
+        (option) => option && !selected.includes(option)
+      )
     );
-  }, [router.asPath]);
+  }, [window.location.search]);
 
   const toggleOption = (option: string) => {
     if (selectedOptions.includes(option)) {

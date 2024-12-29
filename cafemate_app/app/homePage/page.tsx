@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import API from "src/constants/api";
+import { label_options } from "src/constants/label_options";
 
 const Splide = dynamic(
   () => import("@splidejs/react-splide").then((mod) => mod.Splide),
