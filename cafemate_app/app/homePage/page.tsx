@@ -8,17 +8,7 @@ import { useEffect, useState } from "react";
 import API from "src/constants/api";
 import { label_options } from "src/constants/label_options";
 import { mrtLines } from "src/constants/mrtStations";
-
-const Splide = dynamic(
-  () => import("@splidejs/react-splide").then((mod) => mod.Splide),
-  { ssr: false }
-);
-const SplideSlide = dynamic(
-  () => import("@splidejs/react-splide").then((mod) => mod.SplideSlide as any),
-  { ssr: false }
-);
-
-// Removed unused getCookie function
+import getCookie from "src/getCookies";
 
 interface Cafe {
   cafe_id: string;
@@ -31,7 +21,7 @@ interface Cafe {
   }[]; // 新增營業時間
   gmap_link?: string;
   distance: number; //新增與用戶距離
-  image_urls: string;
+  images_urls: string[];
   isOpenNow?: boolean; // 是否營業
 }
 const HomePage = () => {
@@ -170,7 +160,7 @@ const HomePage = () => {
 
       const data = await response.json();
       if (data.status === 200) {
-        alert(data.message); // Show success message
+        // alert(data.message); // Show success message
         router.push("/signIn"); // Redirect to signin page
       } else {
         alert("Logout failed");
@@ -290,13 +280,19 @@ const HomePage = () => {
                 className="bg-white text-[#563517] p-6 rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300"
               >
                 {/* Cafe Image */}
-                <div className="w-full h-64 relative mb-4">
-                  <img
-                    src={cafe.images_urls[0]}
-                    alt={cafe.name}
-                    className="w-full h-full object-cover rounded-lg"
-                  />
-                </div>
+                {cafe.images_urls.length > 0 ? (
+                  <div className="w-full h-64 relative mb-4">
+                    <img
+                      src={cafe.images_urls[0]}
+                      alt={cafe.name}
+                      className="w-full h-full object-cover rounded-lg"
+                    />
+                  </div>
+                ) : (
+                  <div className="w-full h-64 bg-gray-300 flex items-center justify-center rounded-lg">
+                    <p className="text-gray-500">無圖片</p>
+                  </div>
+                )}
 
                 {/* Cafe Details */}
                 <div className="mb-4">
