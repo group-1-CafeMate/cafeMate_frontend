@@ -60,7 +60,7 @@ const SignIn = () => {
   const handleSignIn = async () => {
     setError("");
     try {
-      const response = await fetch(API.User.Login, {
+      const response = await fetch(API.User.LogIn, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
