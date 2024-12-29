@@ -35,14 +35,6 @@ const HomePage = () => {
   const [location, setLocation] = useState<GeolocationCoordinates | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  const options = {
-    "適合讀書": "work_and_study_friendly",
-    "不限時": "time_unlimit",
-    "有插座": "socket",
-    "提供WiFi": "wifi",
-    "營業中": "", // 營業中在由咖啡廳openhour在前端判斷
-    "可帶寵物": "pets_allowed",
-  };
 
   useEffect(() => {
     if (typeof window !== "undefined" && navigator.geolocation) {
@@ -64,7 +56,7 @@ const HomePage = () => {
 
     // 添加选定的筛选条件
     selectedOptions.forEach((opt) => {
-      const key = options[opt as keyof typeof options];
+      const key = label_options[opt as keyof typeof label_options];
       if (key !== "") {
         queryParams.append(key, "true");
       }
@@ -286,7 +278,7 @@ const HomePage = () => {
         </div>
 
         <div className="flex flex-wrap justify-center gap-4 sm:gap-6 mt-8">
-          {Object.keys(options).map((option) => (
+          {Object.keys(label_options).map((option) => (
             <div
               key={option}
               className={`flex items-center justify-center px-6 py-4 rounded-full cursor-pointer transition-all duration-300 text-lg transform hover:scale-110 ${selectedOptions.includes(option)
