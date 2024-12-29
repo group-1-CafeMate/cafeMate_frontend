@@ -31,7 +31,7 @@ interface Cafe {
   }[]; // 新增營業時間
   gmap_link?: string;
   distance: number; //新增與用戶距離
-  image_url: string | null;
+  images_urls: string[];
   isOpenNow?: boolean; // 是否營業
 }
 const HomePage = () => {
@@ -231,8 +231,8 @@ const HomePage = () => {
             <div
               key={option}
               className={`flex items-center justify-center px-6 py-4 rounded-full cursor-pointer transition-all duration-300 text-lg transform hover:scale-110 ${selectedOptions.includes(option)
-                  ? "bg-green-500 text-white border-green-500"
-                  : "bg-gray-200 text-gray-700 border-gray-300 hover:shadow-lg"
+                ? "bg-green-500 text-white border-green-500"
+                : "bg-gray-200 text-gray-700 border-gray-300 hover:shadow-lg"
                 }`}
               onClick={() => handleOptionSelect(option)}
             >
@@ -273,10 +273,10 @@ const HomePage = () => {
                 className="bg-white text-[#563517] p-6 rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300"
               >
                 {/* Cafe Image */}
-                {cafe.image_url ? (
+                {cafe.images_urls.length > 0 ? (
                   <div className="w-full h-64 relative mb-4">
                     <img
-                      src={cafe.image_url}
+                      src={cafe.images_urls[0]}
                       alt={cafe.name}
                       className="w-full h-full object-cover rounded-lg"
                     />
@@ -293,8 +293,8 @@ const HomePage = () => {
                   <div className="flex items-center space-x-2">
                     <span
                       className={`text-sm font-bold px-2 py-1 rounded ${cafe.isOpenNow
-                          ? "bg-green-500 text-white"
-                          : "bg-red-500 text-white"
+                        ? "bg-green-500 text-white"
+                        : "bg-red-500 text-white"
                         }`}
                     >
                       {cafe.isOpenNow ? "營業中" : "未營業"}
