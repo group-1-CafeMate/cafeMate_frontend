@@ -8,17 +8,8 @@ import { useEffect, useState } from "react";
 import API from "src/constants/api";
 import { label_options } from "src/constants/label_options";
 import { mrtLines } from "src/constants/mrtStations";
+import getCookie from "src/getCookies";
 
-const Splide = dynamic(
-  () => import("@splidejs/react-splide").then((mod) => mod.Splide),
-  { ssr: false }
-);
-const SplideSlide = dynamic(
-  () => import("@splidejs/react-splide").then((mod) => mod.SplideSlide as any),
-  { ssr: false }
-);
-
-// Removed unused getCookie function
 
 interface Cafe {
   cafe_id: string;
@@ -153,7 +144,7 @@ const HomePage = () => {
 
       const data = await response.json();
       if (data.status === 200) {
-        alert(data.message); // Show success message
+        // alert(data.message); // Show success message
         router.push('/signIn'); // Redirect to signin page
       } else {
         alert('Logout failed');
