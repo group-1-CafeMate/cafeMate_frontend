@@ -5,10 +5,9 @@ import Link from "next/link";
 import API from "src/constants/api";
 import { useState, useEffect } from "react";
 import { Instagram, Map } from "lucide-react";
-import { useRouter } from "next/navigation";
+import renderStars from "components/Star";
 import ReactMarkdown from 'react-markdown';
 import {
-  Star,
   MapPin,
   Clock,
   Info,
@@ -101,35 +100,6 @@ const CafeInfoPage = ({ params }: PageParams) => {
     >
       {icon}
       <span>{label}</span>
-    </div>
-  );
-
-  const renderStars = (rating: number) => (
-    <div className="flex items-center space-x-1">
-      {Array.from({ length: 5 }, (_, index) => {
-        const isFullStar = index < Math.floor(rating);
-        const isHalfStar =
-          !isFullStar && index === Math.floor(rating) && rating % 1 >= 0.5;
-
-        return (
-          <span key={index} className="relative inline-block">
-            <Star
-              className={`w-5 h-5 ${
-                isFullStar
-                  ? "fill-yellow-400 text-yellow-400"
-                  : "fill-gray-200 text-gray-200"
-              }`}
-            />
-            {isHalfStar && (
-              <Star
-                className="w-5 h-5 absolute top-0 left-0 fill-yellow-400 text-yellow-400"
-                style={{ clipPath: "inset(0 50% 0 0)" }}
-              />
-            )}
-          </span>
-        );
-      })}
-      <span className="ml-2 text-gray-600">{rating.toFixed(1)}</span>
     </div>
   );
 

@@ -9,7 +9,7 @@ import API from "src/constants/api";
 import { label_options } from "src/constants/label_options";
 import { mrtLines } from "src/constants/mrtStations";
 import getCookie from "src/getCookies";
-
+import renderStars, { renderEmojiStars } from "components/Star";
 interface Cafe {
   cafe_id: string;
   name: string;
@@ -95,22 +95,6 @@ const HomePage = () => {
     });
   };
 
-  const renderStars = (rating: number): string => {
-    const fullStars = Math.floor(rating);
-    const hasHalfStar = rating % 1 >= 0.5;
-    const stars = [];
-
-    for (let i = 0; i < 5; i++) {
-      if (i < fullStars) {
-        stars.push("⭐"); // Full star
-      } else if (i === fullStars && hasHalfStar) {
-        stars.push("✭"); // Half star
-      } else {
-        stars.push("☆"); // Empty star
-      }
-    }
-    return stars.join("");
-  };
 
   useEffect(() => {
     const fetchAllCafes = async () => {
@@ -275,9 +259,10 @@ const HomePage = () => {
           {/* Grid Layout for Cafe Cards */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
             {displayedCafes.map((cafe: Cafe, index) => (
-              <div
-                key={index}
-                className="bg-white text-[#563517] p-6 rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300"
+              <Link
+                href={`/cafeinfo/${cafe.cafe_id}`}
+                key={cafe.cafe_id}
+                className="bg-white text-[#563517] p-6 rounded-lg shadow-md hover:scale-105 transition-transform duration-300"
               >
                 {/* Cafe Image */}
                 {cafe.images_urls.length > 0 ? (
@@ -312,12 +297,13 @@ const HomePage = () => {
                   </div>
                   {/* Star Rating */}
                   <span className="text-sm text-gray-600 block">
-                    {renderStars(cafe.rating)} {cafe.rating.toFixed(1)}
+                    {renderStars(cafe.rating)}
                   </span>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
+
         </div>
 
         <div className="flex justify-center mt-3 space-x-4">

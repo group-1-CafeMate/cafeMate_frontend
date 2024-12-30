@@ -22,7 +22,7 @@ interface Cafe {
   gmap_link?: string;
   isOpenNow?: boolean; // 是否營業中
 }
-
+  
 const CafeCard = ({ 
   cafe, 
   selectedOptions 
@@ -299,7 +299,7 @@ const FilteredPage = () => {
                   className="bg-[#6f4827] text-white px-4 py-2 rounded-full text-lg cursor-pointer hover:bg-[#7d553a]"
                   onClick={() => toggleOption(option)}
                 >
-                  {label} ×
+                  {label}
                 </span>
               );
             })}
