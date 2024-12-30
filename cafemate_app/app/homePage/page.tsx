@@ -28,7 +28,9 @@ const HomePage = () => {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<string>("homepage");
   const [inputValue, setInputValue] = useState<string>("");
-  const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
+  const [selectedOptions, setSelectedOptions] = useState<{
+    [key: string]: boolean;
+  }>({});
   const [displayedCafes, setDisplayedCafes] = useState<Cafe[]>([]);
   const [allCafes, setAllCafes] = useState<Cafe[]>([]);
   const [selectedStation, setSelectedStation] = useState("");
@@ -61,10 +63,20 @@ const HomePage = () => {
       queryParams.append("station", selectedStation);
     }
 
-    selectedOptions.forEach((opt) => {
-      const key = label_options[opt as keyof typeof label_options];
-      if (key !== "") {
-        queryParams.append(key, "true");
+    // selectedOptions.forEach((opt) => {
+    //   const key = label_options[opt as keyof typeof label_options];
+    //   if (key !== "") {
+    //     queryParams.append(key, "true");
+    //   }
+    // });
+
+    // 透過 Object.entries() 取得物件的 key-value pair
+    Object.entries(selectedOptions).forEach(([label, isSelected]) => {
+      if (isSelected) {
+        const key = label_options[label as keyof typeof label_options];
+        if (key) {
+          queryParams.append(key, "true");
+        }
       }
     });
 
@@ -97,7 +109,6 @@ const HomePage = () => {
     });
   };
 
-
   useEffect(() => {
     const fetchAllCafes = async () => {
       const response = await fetch(API.Cafe.GetCafes, {
@@ -125,13 +136,21 @@ const HomePage = () => {
 
   // 處理篩選條件選擇
   const handleOptionSelect = (option: string) => {
-    const newSelectedOptions = selectedOptions.includes(option)
-      ? selectedOptions.filter((o) => o !== option)
-      : [...selectedOptions, option];
+    setSelectedOptions((prev) => {
+      const newOptions = {
+        ...prev,
+        [option]: !prev[option],
+      };
 
-    setSelectedOptions(newSelectedOptions);
-    // 更新輸入框的值，將所有選中的選項用空格分隔
-    setInputValue(newSelectedOptions.join(" "));
+      // 更新輸入框的值
+      const selectedOptions = Object.entries(newOptions)
+        .filter(([_, isSelected]) => isSelected)
+        .map(([label]) => label);
+
+      setInputValue(selectedOptions.join(" "));
+
+      return newOptions;
+    });
   };
 
   const handleLogout = async () => {
@@ -197,7 +216,7 @@ const HomePage = () => {
           </Link>
         </div>
         <button
-          className="bg-white text-[#563517] px-6 py-3 rounded hover:bg-gray-200 text-lg"
+          className="bg-white text-[#563517] px-5 py-2 rounded text-lg transition-colors duration-200 hover:bg-[#c5a782] hover:text-white"
           onClick={handleLogout}
         >
           Log Out
@@ -230,6 +249,7 @@ const HomePage = () => {
           <input
             type="text"
             value={inputValue}
+            readOnly
             onChange={(e) => setInputValue(e.target.value)}
             className="w-full sm:w-2/5 p-2 border border-gray-400 rounded focus:outline-none text-lg"
             placeholder="點擊下方條件輸入你的需求..."
@@ -247,32 +267,17 @@ const HomePage = () => {
             <div
               key={option}
               className={`flex items-center justify-center px-4 py-2 rounded-full cursor-pointer transition-all duration-300 text-lg transform hover:scale-105 ${
-                selectedOptions.includes(option)
+                selectedOptions[option]
                   ? "bg-green-500 text-white border-green-500"
                   : "bg-gray-200 text-gray-700 border-gray-300 hover:shadow-lg"
               }`}
               onClick={() => handleOptionSelect(option)}
             >
-              {selectedOptions.includes(option) && (
-                <span className="mr-2">✔️</span>
-              )}
+              {selectedOptions[option] && <span className="mr-2">✔️</span>}
               {option}
             </div>
           ))}
         </div>
-      </div>
-
-      {/* Location Info */}
-      <div className="p-4 bg-gray-100 text-center text-lg">
-        {location ? (
-          <p>
-            您的定位：緯度 {location.latitude}, 經度 {location.longitude}
-          </p>
-        ) : error ? (
-          <p className="text-red-500">{error}</p>
-        ) : (
-          <p>正在嘗試獲取您的定位...</p>
-        )}
       </div>
 
       {/* Cafes Section with Grid Layout */}
@@ -329,7 +334,6 @@ const HomePage = () => {
               </Link>
             ))}
           </div>
-
         </div>
 
         <div className="flex justify-center mt-3 space-x-4">
