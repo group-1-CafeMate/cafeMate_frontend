@@ -37,6 +37,8 @@ const HomePage = () => {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const cafesPerPage = 3; // 每頁顯示卡片數量
   const totalPages = Math.min(Math.ceil(allCafes.length / cafesPerPage), 3); // 總頁數3頁
+  const [username, setUsername] = useState<string | null>(null); // State to store username
+  const userId = getCookie("uid"); // Get the user ID from cookies
 
   useEffect(() => {
     if (typeof window !== "undefined" && navigator.geolocation) {
@@ -155,6 +157,30 @@ const HomePage = () => {
     }
   };
 
+  // Fetch user data after login
+  const fetchUserData = async () => {
+    try {
+      const response = await fetch(`${API.User.GetUserInfo}?uid=${userId}`, {
+        method: "GET",
+        credentials: "include",
+      });
+      const data = await response.json();
+      if (data.status === "success" && data.data.username) {
+        setUsername(data.data.username); // Set the username from the response
+      } else {
+        console.error(data.message); // Handle error message
+      }
+    } catch (error) {
+      console.error("Error fetching user data:", error);
+    }
+  };
+
+  useEffect(() => {
+    if (userId) {
+      fetchUserData(); // Fetch user data on component mount
+    }
+  }, [userId]);
+
   return (
     <div className="min-h-screen bg-[#dfdad5] text-[#563517]">
       {/* Navigation Bar */}
@@ -253,7 +279,7 @@ const HomePage = () => {
       <div className="bg-[#724e2c] text-white min-h-[70vh] flex flex-col justify-between">
         <div className="p-6 sm:p-8 flex-grow flex flex-col">
           <h2 className="text-2xl sm:text-2xl font-bold mb-4 text-center">
-            我們為你收集了這些咖啡廳：
+            嗨! {username ? username : "使用者"} 我們為你收集了這些咖啡廳：
           </h2>
 
           {/* Grid Layout for Cafe Cards */}

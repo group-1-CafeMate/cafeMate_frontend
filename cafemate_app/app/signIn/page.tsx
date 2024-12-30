@@ -71,7 +71,9 @@ const SignIn = () => {
 
       const data = await response.json();
 
-      if (response.ok) {
+      if (data.status === 200) {
+        // 登入成功，儲存 uid 進cookie
+        document.cookie = `uid=${data.uid}; path=/; max-age=${3600 * 12}`; // Set cookie for 12 hours
         router.push("/homePage");
       } else {
         setError(data.message || "登入失敗");
