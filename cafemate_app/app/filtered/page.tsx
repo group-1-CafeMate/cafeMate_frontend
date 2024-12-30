@@ -23,6 +23,69 @@ interface Cafe {
   isOpenNow?: boolean; // 是否營業中
 }
 
+const CafeCard = ({ 
+  cafe, 
+  selectedOptions 
+}: { 
+  cafe: Cafe;
+  selectedOptions: string[];
+}) => {
+  const stopPropagation = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (cafe.gmap_link) {
+      window.open(cafe.gmap_link, '_blank');
+    }
+  };
+
+  return (
+    <div className="bg-white rounded-lg shadow-lg p-4 relative transform transition-transform hover:scale-105">
+      <Link href={`/cafeinfo/${cafe.cafe_id}`} className="block">
+        <img
+          src={cafe.image_url || "/placeholder-image.jpg"}
+          alt={cafe.name}
+          className="w-full h-32 object-cover rounded-lg mb-4"
+        />
+        {selectedOptions.every((opt) => cafe.labels.includes(opt)) && (
+          <div className="absolute top-0 left-0 bg-red-600 bg-opacity-80 text-white px-4 py-1 rounded-tl-lg">
+            完全符合你的需求
+          </div>
+        )}
+        <div className="flex justify-between items-center mb-2">
+          <h3 className="text-xl font-bold">{cafe.name}</h3>
+          <div className="flex items-center space-x-3">
+            <span
+              className={`text-lg font-bold px-3 py-1 rounded ${
+                cafe.isOpenNow
+                  ? "bg-green-500 text-white"
+                  : "bg-red-500 text-white"
+              }`}
+            >
+              {cafe.isOpenNow ? "營業中" : "未營業"}
+            </span>
+            <span className="text-lg text-gray-600 font-bold">
+              ⭐ {cafe.rating.toFixed(1)}
+            </span>
+          </div>
+        </div>
+      </Link>
+
+      <button
+        onClick={stopPropagation}
+        className="text-blue-500 underline mb-2 block"
+      >
+        View on Google Maps
+      </button>
+
+      <p>🕒 {cafe.open_hour.join(", ")}</p>
+      <p>🏷️ {cafe.labels.length} 個符合標籤</p>
+      <div className="absolute bottom-4 right-4 bg-[#724e2c] text-white px-3 py-1 rounded">
+        {cafe.distance.toFixed(1)}km away from you
+      </div>
+    </div>
+  );
+};
+
 const FilteredPage = () => {
   const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
   const [remainingOptions, setRemainingOptions] = useState<string[]>([]);
@@ -41,10 +104,8 @@ const FilteredPage = () => {
     setError(null);
 
     try {
-      // 取得目前網址的query params
       const queryParams = new URLSearchParams();
 
-      // 添加选定的筛选条件
       selectedOptions.forEach((opt) => {
         queryParams.append(opt, "true");
       });
@@ -61,13 +122,11 @@ const FilteredPage = () => {
 
       if (response.ok) {
         const data = await response.json();
-
         // 添加營業狀態
         const cafesWithOpenStatus = data.cafes.map((cafe: Cafe) => ({
           ...cafe,
           isOpenNow: checkIsOpen(cafe.open_hour),
         }));
-
         setFilteredCafes(cafesWithOpenStatus);
       } else {
         setError("無法獲取篩選結果，請稍後再試。");
@@ -163,7 +222,6 @@ const FilteredPage = () => {
           )
       )
     );
-    setTempSelectedOptions(selected);
   }, [searchParams]);
 
   const toggleOption = (option: string) => {
@@ -220,7 +278,6 @@ const FilteredPage = () => {
         </div>
       </div>
 
-      {/* Results Header */}
       <div className="p-6">
         <h2 className="text-3xl font-bold mb-6">
           {selectedStation
@@ -228,7 +285,6 @@ const FilteredPage = () => {
             : "依照您目前位置篩選結果如下："}
         </h2>
 
-        {/* 已選條件框 */}
         <div className="flex items-center gap-4 mb-6">
           <div className="flex flex-wrap gap-3 flex-1 bg-white p-4 border border-gray-400 rounded min-h-[56px]">
             {tempSelectedOptions.map((option) => {
@@ -261,7 +317,6 @@ const FilteredPage = () => {
           </button>
         </div>
 
-        {/* 未選條件 */}
         <div className="flex flex-wrap gap-3 mb-6">
           {remainingOptions
             .filter((option) => !tempSelectedOptions.includes(option))
@@ -276,7 +331,6 @@ const FilteredPage = () => {
             ))}
         </div>
 
-        {/* Filtered Cafes */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
           {getCurrentPageCafes().map((cafe) => (
             <Link
@@ -341,7 +395,6 @@ const FilteredPage = () => {
           ))}
         </div>
 
-        {/* Pagination */}
         {totalPages > 1 && (
           <div className="flex justify-center mt-6 space-x-4">
             <button
