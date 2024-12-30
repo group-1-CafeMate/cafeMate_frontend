@@ -25,7 +25,7 @@ const renderStars = (rating: number) => (
         </span>
       );
     })}
-    <span className="ml-2 text-gray-600">{rating.toFixed(1)}</span>
+    <span className="ml-2 font-semibold">{rating.toFixed(1)}</span>
   </div>
 );
 

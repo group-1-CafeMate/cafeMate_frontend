@@ -6,6 +6,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import API from "src/constants/api";
 import { label_options } from "src/constants/label_options";
+import renderStars, { renderEmojiStars } from "components/Star";
 
 interface Cafe {
   cafe_id: string;
@@ -111,22 +112,6 @@ const FilteredPage = () => {
     });
   };
 
-  const renderStars = (rating: number): string => {
-    const fullStars = Math.floor(rating);
-    const hasHalfStar = rating % 1 >= 0.5;
-    const stars = [];
-
-    for (let i = 0; i < 5; i++) {
-      if (i < fullStars) {
-        stars.push("⭐"); // Full star
-      } else if (i === fullStars && hasHalfStar) {
-        stars.push("✭"); // Half star
-      } else {
-        stars.push("☆"); // Empty star
-      }
-    }
-    return stars.join("");
-  };
   useEffect(() => {
     if (typeof window !== "undefined" && navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
@@ -239,14 +224,14 @@ const FilteredPage = () => {
 
         <div className="flex flex-col gap-4 mb-6">
           {/* Input field for selected options */}
-          <p className="text-sm text-gray-500">
+          <p className="text-smㄙ text-gray-500">
             可以點擊下方條件重新選擇你的需求...
           </p>
 
           {/* Options container */}
           <div className="flex flex-wrap gap-3">
             {/* Selected options */}
-            <div className="flex flex-wrap gap-3 flex-1 bg-green-100 p-4 border border-green-300 rounded">
+            <div className="flex flex-wrap gap-3 flex-1 bg-white p-4 border border-[#9c6f44] rounded">
               {Object.entries(tempSelectedOptions)
                 .filter(([_, isSelected]) => isSelected)
                 .map(([option]) => (
@@ -331,9 +316,6 @@ const FilteredPage = () => {
               {/* 星等評分 */}
               <div className="flex items-center text-sm text-gray-600 -mt-1">
                 {renderStars(cafe.rating)}
-                <span className="ml-2 font-semibold">
-                  {cafe.rating.toFixed(1)}
-                </span>
               </div>
 
               {/* 額外資訊 */}

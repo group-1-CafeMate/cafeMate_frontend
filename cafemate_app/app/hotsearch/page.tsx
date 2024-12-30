@@ -3,6 +3,7 @@
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import API from "src/constants/api";
+import renderStars, { renderEmojiStars } from "components/Star";
 
 interface Cafe {
   cafe_id: string;
@@ -107,23 +108,6 @@ const HotSearchPage = () => {
     return count.toLocaleString();
   };
 
-  const renderStars = (rating: number) => {
-    const fullStars = Math.floor(rating);
-    const hasHalfStar = rating % 1 >= 0.5;
-    const stars = [];
-
-    for (let i = 0; i < 5; i++) {
-      if (i < fullStars) {
-        stars.push("⭐"); // Full star
-      } else if (i === fullStars && hasHalfStar) {
-        stars.push("✭"); // Half star
-      } else {
-        stars.push("☆"); // Empty star
-      }
-    }
-    return stars.join("");
-  };
-
   if (isLoading) {
     return (
       <div className="flex justify-center items-center min-h-screen bg-[#dfdad5]">
@@ -174,7 +158,7 @@ const HotSearchPage = () => {
                 {index < 3 && (
                   <div className="absolute top-0 left-0 bg-red-600 bg-opacity-80 text-white px-4 py-3 rounded-tl-lg text-lg font-bold z-10">
                     Top {index + 1}
-                  </div> 
+                  </div>
                 )}
                 <div className="relative w-full h-40 mb-4">
                   <img
@@ -200,9 +184,6 @@ const HotSearchPage = () => {
                   {/* Rating */}
                   <div className="flex items-center mb-2">
                     <span className="text-sm">{renderStars(cafe.rating)}</span>
-                    <span className="ml-2 text-sm font-bold">
-                      {cafe.rating.toFixed(1)}
-                    </span>
                   </div>
                   {/* Labels */}
                   <p className="text-sm text-gray-700 truncate">
