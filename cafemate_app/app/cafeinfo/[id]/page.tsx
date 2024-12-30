@@ -4,7 +4,9 @@ import Image from "next/image";
 import Link from "next/link";
 import API from "src/constants/api";
 import { useState, useEffect } from "react";
+import { Instagram, Map } from "lucide-react";
 import { useRouter } from "next/navigation";
+import ReactMarkdown from 'react-markdown';
 import {
   Star,
   MapPin,
@@ -33,7 +35,7 @@ interface CafeInfo {
   pets_allowed: boolean;
   wiFi: boolean;
   info: string;
-  comment: string[];
+  comment: string;
   ig_link: string;
   gmap_link: string;
   image_url?: string;
@@ -45,7 +47,6 @@ interface PageParams {
 }
 
 const CafeInfoPage = ({ params }: PageParams) => {
-  // Unwrap the params using React.use()
   const { id } = use(params);
   
   const [cafe, setCafe] = useState<CafeInfo | null>(null);
@@ -58,7 +59,7 @@ const CafeInfoPage = ({ params }: PageParams) => {
       
       setIsLoading(true);
       try {
-        console.log('Fetching cafe with ID:', id); // Debug log
+        console.log('Fetching cafe with ID:', id);
         const response = await fetch(`${API.Cafe.GetCafe}?cafe_id=${id}`, {
           method: 'GET',
           credentials: 'include',
@@ -132,6 +133,12 @@ const CafeInfoPage = ({ params }: PageParams) => {
     </div>
   );
 
+  const MarkdownContent = ({ content }: { content: string }) => (
+    <div className="prose prose-slate max-w-none">
+      <ReactMarkdown>{content}</ReactMarkdown>
+    </div>
+  );
+
   if (isLoading) {
     return (
       <div className="w-full min-h-screen bg-[#dfdad5] flex justify-center items-center">
@@ -175,31 +182,20 @@ const CafeInfoPage = ({ params }: PageParams) => {
         </div>
 
         {/* Cafe Name, Rating, and Basic Info */}
-        <div className="bg-white rounded-lg shadow-lg p-6 space-y-4">
-          <div className="flex items-start justify-between">
+        <div className="bg-white rounded-lg shadow-lg p-6">
+          <div className="flex flex-col md:flex-row justify-between gap-4">
+            {/* Left side - Cafe info */}
             <div className="space-y-2">
               <div className="flex items-center space-x-4">
-                {cafe.ig_link ? (
-                  <Link href={cafe.ig_link} target="_blank">
-                    <h1 className="text-3xl font-bold hover:text-[#6f4827]">
-                      {cafe.name}
-                    </h1>
-                  </Link>
-                ) : (
-                  <h1 className="text-3xl font-bold">{cafe.name}</h1>
-                )}
+                <h1 className="text-3xl font-bold">{cafe.name}</h1>
                 {renderStars(cafe.rating)}
               </div>
               <div className="flex items-center space-x-6 text-gray-600">
                 {cafe.gmap_link && (
-                  <Link
-                    href={cafe.gmap_link}
-                    target="_blank"
-                    className="flex items-center space-x-2 hover:text-blue-600"
-                  >
+                  <div className="flex items-center space-x-2">
                     <MapPin className="w-4 h-4" />
                     <span>{cafe.addr}</span>
-                  </Link>
+                  </div>
                 )}
                 {cafe.distance !== undefined && (
                   <div className="bg-[#724e2c] text-white px-3 py-1 rounded">
@@ -213,70 +209,31 @@ const CafeInfoPage = ({ params }: PageParams) => {
                 </div>
               )}
             </div>
-          </div>
-        </div>
 
-        {/* Image Gallery */}
-        {cafe.images_urls && cafe.images_urls.length > 0 && (
-          <div className="bg-white rounded-lg shadow-lg p-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {cafe.images_urls.map((url, index) => (
-                <div key={index} className="relative aspect-w-16 aspect-h-9">
-                  <img
-                    src={url}
-                    alt={`${cafe.name} - Image ${index + 1}`}
-                    className="rounded-lg object-cover w-full h-full"
-                  />
-                </div>
-              ))}
+            {/* Right side - Social links */}
+            <div className="flex flex-row md:flex-col gap-4 items-start">
+              {cafe.ig_link && (
+                <Link 
+                  href={cafe.ig_link} 
+                  target="_blank"
+                  className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-purple-500 to-pink-500 text-white hover:opacity-90 transition-opacity"
+                >
+                  <Instagram className="w-5 h-5" />
+                  <span className="hidden sm:inline">Instagram</span>
+                </Link>
+              )}
+              {cafe.gmap_link && (
+                <Link 
+                  href={cafe.gmap_link} 
+                  target="_blank"
+                  className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-green-500 to-teal-500 text-white hover:opacity-90 transition-opacity"
+                >
+                  <Map className="w-5 h-5" />
+                  <span className="hidden sm:inline">Google Maps</span>
+                </Link>
+              )}
             </div>
           </div>
-        )}
-
-        {/* Stacked Info Sections */}
-        <div className="bg-white rounded-lg shadow-lg p-6 space-y-6">
-          {/* Opening Hours */}
-          <div className="space-y-4">
-            <div className="flex items-center space-x-2">
-              <Clock className="w-5 h-5 text-[#563517]" />
-              <h3 className="font-semibold">營業時間</h3>
-            </div>
-            <ul className="space-y-1 text-gray-600">
-              {cafe.open_hour.map((hour, index) => (
-                <li key={index}>
-                  {/* Display day, open time, and close time */}
-                  {hour.day_of_week}: {hour.open_time} - {hour.close_time}
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Information */}
-          {cafe.info && (
-            <div className="space-y-4">
-              <div className="flex items-center space-x-2">
-                <Info className="w-5 h-5 text-[#563517]" />
-                <h3 className="font-semibold">資訊</h3>
-              </div>
-              <p className="text-gray-600 whitespace-pre-line">{cafe.info}</p>
-            </div>
-          )}
-
-          {/* Overall Customer Feedback */}
-          {cafe.comment && Array.isArray(cafe.comment) && cafe.comment.length > 0 && (
-            <div className="space-y-4">
-              <div className="flex items-center space-x-2">
-                <MessageCircle className="w-5 h-5 text-[#563517]" />
-                <h3 className="font-semibold">客戶反饋</h3>
-              </div>
-              <div className="text-gray-600 space-y-2">
-                {cafe.comment.map((comment, index) => (
-                  <p key={index}>{comment}</p>
-                ))}
-              </div>
-            </div>
-          )}
-
         </div>
 
         {/* Tags Section */}
@@ -308,6 +265,70 @@ const CafeInfoPage = ({ params }: PageParams) => {
               active={cafe.wiFi} 
             />
           </div>
+        </div>
+
+        {/* Image Gallery */}
+        {cafe.images_urls && cafe.images_urls.length > 0 && (
+          <div className="bg-white rounded-lg shadow-lg p-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {cafe.images_urls.map((url, index) => (
+                <div key={index} className="relative aspect-w-16 aspect-h-9">
+                  <img
+                    src={url}
+                    alt={`${cafe.name} - Image ${index + 1}`}
+                    className="rounded-lg object-cover w-full h-full"
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Stacked Info Sections */}
+        <div className="bg-white rounded-lg shadow-lg p-6 space-y-6">
+          {/* Opening Hours */}
+          <div className="space-y-4">
+            <div className="flex items-center space-x-2">
+              <Clock className="w-5 h-5 text-[#563517]" />
+              <h3 className="font-semibold">營業時間</h3>
+            </div>
+            <ul className="space-y-1 text-gray-600">
+              {["星期一", "星期二", "星期三", "星期四", "星期五", "星期六", "星期日"].map((day, index) => {
+              const hour = cafe.open_hour.find(h => h.day_of_week === day);
+              return (
+                <li key={index}>
+                {hour ? `${hour.day_of_week}: ${hour.open_time} - ${hour.close_time}` : `${day}: 休息`}
+                </li>
+              );
+              })}
+            </ul>
+          </div>
+
+          {/* Information */}
+          {cafe.info && (
+            <div className="space-y-4">
+              <div className="flex items-center space-x-2">
+                <Info className="w-5 h-5 text-[#563517]" />
+                <h3 className="font-semibold">資訊</h3>
+              </div>
+              <div className="text-gray-600">
+                <MarkdownContent content={cafe.info} />
+              </div>
+            </div>
+          )}
+
+          {/* Overall Customer Feedback */}
+          {cafe.comment && (
+            <div className="space-y-4">
+              <div className="flex items-center space-x-2">
+                <MessageCircle className="w-5 h-5 text-[#563517]" />
+                <h3 className="font-semibold">客戶反饋</h3>
+              </div>
+              <div className="text-gray-600">
+                <MarkdownContent content={cafe.comment} />
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>
