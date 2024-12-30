@@ -169,16 +169,16 @@ const HotSearchPage = () => {
       <div className="p-6">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {cafes.slice(0, cafesPerPage).map((cafe, index) => (
-            <Link href={`/cafe/${cafe.cafe_id}`} key={cafe.cafe_id}>
+            <Link href={`/cafeinfo/${cafe.cafe_id}`} key={cafe.cafe_id}>
               <div className="bg-white rounded-lg shadow-lg p-4 relative transform transition-transform hover:scale-105 h-[400px] flex flex-col">
                 {index < 3 && (
                   <div className="absolute top-0 left-0 bg-red-600 bg-opacity-80 text-white px-4 py-3 rounded-tl-lg text-lg font-bold z-10">
                     Top {index + 1}
-                  </div>
+                  </div> 
                 )}
                 <div className="relative w-full h-40 mb-4">
                   <img
-                    src={cafe.image_url}
+                    src={cafe.image_url ?? ""}
                     alt={cafe.name}
                     className="w-full h-full object-cover rounded-lg"
                   />
