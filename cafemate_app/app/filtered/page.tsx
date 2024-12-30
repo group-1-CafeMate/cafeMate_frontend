@@ -22,11 +22,11 @@ interface Cafe {
   gmap_link?: string;
   isOpenNow?: boolean; // 是否營業中
 }
-  
-const CafeCard = ({ 
-  cafe, 
-  selectedOptions 
-}: { 
+
+const CafeCard = ({
+  cafe,
+  selectedOptions
+}: {
   cafe: Cafe;
   selectedOptions: string[];
 }) => {
@@ -55,11 +55,10 @@ const CafeCard = ({
           <h3 className="text-xl font-bold">{cafe.name}</h3>
           <div className="flex items-center space-x-3">
             <span
-              className={`text-lg font-bold px-3 py-1 rounded ${
-                cafe.isOpenNow
-                  ? "bg-green-500 text-white"
-                  : "bg-red-500 text-white"
-              }`}
+              className={`text-lg font-bold px-3 py-1 rounded ${cafe.isOpenNow
+                ? "bg-green-500 text-white"
+                : "bg-red-500 text-white"
+                }`}
             >
               {cafe.isOpenNow ? "營業中" : "未營業"}
             </span>
@@ -112,6 +111,9 @@ const FilteredPage = () => {
       if (location) {
         queryParams.append("latitude", location.latitude.toString());
         queryParams.append("longitude", location.longitude.toString());
+      }
+      if (selectedStation) {
+        queryParams.append("metro_station_id", selectedStation.split(" ")[0]);
       }
       const baseUrl = API.Cafe.GetFilteredCafe;
       const fullUrl = `${baseUrl}?${queryParams.toString()}`;
@@ -358,11 +360,10 @@ const FilteredPage = () => {
                 <h3 className="text-lg font-bold">{cafe.name}</h3>
                 {/* Open Status */}
                 <span
-                  className={`text-lg font-bold px-2 py-1 rounded whitespace-nowrap ${
-                    cafe.isOpenNow
-                      ? "bg-green-500 text-white"
-                      : "bg-red-500 text-white"
-                  }`}
+                  className={`text-lg font-bold px-2 py-1 rounded whitespace-nowrap ${cafe.isOpenNow
+                    ? "bg-green-500 text-white"
+                    : "bg-red-500 text-white"
+                    }`}
                 >
                   {cafe.isOpenNow ? "營業中" : "未營業"}
                 </span>
