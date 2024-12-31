@@ -154,6 +154,7 @@ const SignIn = () => {
             {error && <p className="text-red-500 text-sm">{error}</p>}
             <div className="text-right">
               <button
+                type="button"
                 className="text-sm text-gray-500 hover:underline"
                 onClick={(e) => {
                   e.preventDefault();
