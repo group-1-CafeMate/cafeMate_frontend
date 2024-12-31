@@ -166,7 +166,7 @@ const HomePage = () => {
       const data = await response.json();
       if (data.status === 200) {
         // alert(data.message); // Show success message
-        router.push("/signIn"); // Redirect to signin page
+        router.push("/signin"); // Redirect to signin page
       } else {
         alert("Logout failed");
       }

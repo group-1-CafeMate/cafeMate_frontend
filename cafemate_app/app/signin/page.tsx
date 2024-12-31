@@ -16,7 +16,7 @@ const SignIn = () => {
 
   const handleForgotPassword = async () => {
     if (isLoading) return;
-    
+
     setError("");
     setSuccessMessage("");
 
@@ -65,7 +65,7 @@ const SignIn = () => {
         headers: {
           "Content-Type": "application/json",
         },
-        credentials: 'include',
+        credentials: "include",
         body: JSON.stringify({ username, password }),
       });
 
@@ -74,7 +74,7 @@ const SignIn = () => {
       if (data.status === 200) {
         // 登入成功，儲存 uid 進cookie
         document.cookie = `uid=${data.uid}; path=/; max-age=${3600 * 12}`; // Set cookie for 12 hours
-        router.push("/homePage");
+        router.push("/homepage");
       } else {
         setError(data.message || "登入失敗");
       }
@@ -185,7 +185,9 @@ const SignIn = () => {
                 </p>
                 {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
                 {successMessage && (
-                  <p className="text-green-500 text-sm mb-4">{successMessage}</p>
+                  <p className="text-green-500 text-sm mb-4">
+                    {successMessage}
+                  </p>
                 )}
                 <div className="flex justify-end space-x-4">
                   <button
@@ -197,7 +199,7 @@ const SignIn = () => {
                       }
                     }}
                     className={`text-gray-500 hover:underline ${
-                      isLoading ? 'opacity-50' : ''
+                      isLoading ? "opacity-50" : ""
                     }`}
                   >
                     取消
@@ -206,7 +208,7 @@ const SignIn = () => {
                     label={isLoading ? "處理中..." : "發送重設連結"}
                     variant="solid"
                     onClick={handleForgotPassword}
-                    className={isLoading ? 'opacity-50' : ''}
+                    className={isLoading ? "opacity-50" : ""}
                   />
                 </div>
               </div>
