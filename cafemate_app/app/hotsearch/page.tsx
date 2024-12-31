@@ -129,7 +129,7 @@ const HotSearchPage = () => {
       {/* Navigation */}
       <div className="flex justify-between items-center px-6 py-4 bg-[#563517] text-white">
         <div className="flex space-x-6">
-          <Link href="/homePage">
+          <Link href="/homepage">
             <button className="text-gray-400 hover:underline">回首頁</button>
           </Link>
           <button className="underline hover:underline">熱門推薦</button>
@@ -173,8 +173,8 @@ const HotSearchPage = () => {
                     <h3 className="text-lg font-bold truncate">{cafe.name}</h3>
                     <span
                       className={`text-sm font-bold px-2 py-1 rounded whitespace-nowrap ${cafe.isOpenNow
-                          ? "bg-green-500 text-white"
-                          : "bg-red-500 text-white"
+                        ? "bg-green-500 text-white"
+                        : "bg-red-500 text-white"
                         }`}
                     >
                       {cafe.isOpenNow ? "營業中" : "未營業"}
