@@ -85,7 +85,7 @@ const SignIn = () => {
 
   return (
     <div className="bg-main-bg-color flex justify-center items-center py-12 px-4">
-      <div className="flex flex-col md:flex-row bg-white rounded-lg shadow-lg max-w-5xl w-full h-[600px]">
+      <div className="flex flex-col md:flex-row bg-white rounded-lg shadow-lg max-w-5xl w-full min-h-screen">
         {/* 左側區塊 */}
         <div
           className="w-full md:w-1/2 bg-cover bg-center rounded-t-lg md:rounded-l-lg md:rounded-tr-none flex flex-col justify-between"
