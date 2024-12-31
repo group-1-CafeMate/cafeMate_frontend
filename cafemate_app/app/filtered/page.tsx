@@ -1,12 +1,12 @@
 "use client";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import Image from "next/image";
+
+import renderStars from "components/Star";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import API from "src/constants/api";
 import { label_options } from "src/constants/label_options";
-import renderStars, { renderEmojiStars } from "components/Star";
 
 interface Cafe {
   cafe_id: string;
@@ -292,10 +292,10 @@ const FilteredPage = () => {
               {Object.keys(selectedOptions).every((opt) =>
                 cafe.labels.includes(opt)
               ) && (
-                <div className="absolute top-0 left-0 bg-red-600 bg-opacity-80 text-white px-4 py-1 rounded-tl-lg">
-                  完全符合你的需求
-                </div>
-              )}
+                  <div className="absolute top-0 left-0 bg-red-600 bg-opacity-80 text-white px-4 py-1 rounded-tl-lg">
+                    完全符合你的需求
+                  </div>
+                )}
 
               {/* Cafe Details */}
               <div className="flex justify-between items-center mb-4">
@@ -303,11 +303,10 @@ const FilteredPage = () => {
                 <h3 className="text-lg font-bold">{cafe.name}</h3>
                 {/* Open Status */}
                 <span
-                  className={`text-lg font-bold px-2 py-1 rounded whitespace-nowrap ${
-                    cafe.isOpenNow
-                      ? "bg-green-500 text-white"
-                      : "bg-red-500 text-white"
-                  }`}
+                  className={`text-lg font-bold px-2 py-1 rounded whitespace-nowrap ${cafe.isOpenNow
+                    ? "bg-green-500 text-white"
+                    : "bg-red-500 text-white"
+                    }`}
                 >
                   {cafe.isOpenNow ? "營業中" : "未營業"}
                 </span>

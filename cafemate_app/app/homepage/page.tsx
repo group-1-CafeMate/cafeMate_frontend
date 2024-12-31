@@ -1,5 +1,6 @@
 "use client";
 
+import renderStars from "components/Star";
 import dynamic from "next/dynamic";
 import Image from "next/image";
 import Link from "next/link";
@@ -9,7 +10,6 @@ import API from "src/constants/api";
 import { label_options } from "src/constants/label_options";
 import { mrtLines } from "src/constants/mrtStations";
 import getCookie from "src/getCookies";
-import renderStars, { renderEmojiStars } from "components/Star";
 interface Cafe {
   cafe_id: string;
   name: string;
@@ -266,11 +266,10 @@ const HomePage = () => {
           {Object.keys(label_options).map((option) => (
             <div
               key={option}
-              className={`flex items-center justify-center px-4 py-2 rounded-full cursor-pointer transition-all duration-300 text-lg transform hover:scale-105 ${
-                selectedOptions[option]
+              className={`flex items-center justify-center px-4 py-2 rounded-full cursor-pointer transition-all duration-300 text-lg transform hover:scale-105 ${selectedOptions[option]
                   ? "bg-green-500 text-white border-green-500"
                   : "bg-gray-200 text-gray-700 border-gray-300 hover:shadow-lg"
-              }`}
+                }`}
               onClick={() => handleOptionSelect(option)}
             >
               {selectedOptions[option] && <span className="mr-2">✔️</span>}
@@ -317,11 +316,10 @@ const HomePage = () => {
                     <h3 className="text-lg font-bold">{cafe.name}</h3>
                     {/* Open/Closed Tag */}
                     <span
-                      className={`text-lg font-bold px-2 py-1 rounded whitespace-nowrap ${
-                        cafe.isOpenNow
+                      className={`text-lg font-bold px-2 py-1 rounded whitespace-nowrap ${cafe.isOpenNow
                           ? "bg-green-500 text-white"
                           : "bg-red-500 text-white"
-                      }`}
+                        }`}
                     >
                       {cafe.isOpenNow ? "營業中" : "未營業"}
                     </span>

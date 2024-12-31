@@ -1,23 +1,10 @@
 "use client";
-import React, { use } from "react";
-import Image from "next/image";
-import Link from "next/link";
-import API from "src/constants/api";
-import { useState, useEffect } from "react";
-import { Instagram, Map } from "lucide-react";
 import renderStars from "components/Star";
+import { Clock, Coffee, Dog, Info, Instagram, Map, MapPin, MessageCircle, Power, Timer, Wifi } from "lucide-react";
+import Link from "next/link";
+import React, { use, useEffect, useState } from "react";
 import ReactMarkdown from 'react-markdown';
-import {
-  MapPin,
-  Clock,
-  Info,
-  MessageCircle,
-  Wifi,
-  Coffee,
-  Timer,
-  Power,
-  Dog,
-} from "lucide-react";
+import API from "src/constants/api";
 
 interface CafeInfo {
   cafe_id: string;
@@ -47,7 +34,7 @@ interface PageParams {
 
 const CafeInfoPage = ({ params }: PageParams) => {
   const { id } = use(params);
-  
+
   const [cafe, setCafe] = useState<CafeInfo | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -55,7 +42,7 @@ const CafeInfoPage = ({ params }: PageParams) => {
   useEffect(() => {
     const fetchCafe = async () => {
       if (!id) return;
-      
+
       setIsLoading(true);
       try {
         console.log('Fetching cafe with ID:', id);
@@ -183,8 +170,8 @@ const CafeInfoPage = ({ params }: PageParams) => {
             {/* Right side - Social links */}
             <div className="flex flex-row md:flex-col gap-4 items-start">
               {cafe.ig_link && (
-                <Link 
-                  href={cafe.ig_link} 
+                <Link
+                  href={cafe.ig_link}
                   target="_blank"
                   className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-purple-500 to-pink-500 text-white hover:opacity-90 transition-opacity"
                 >
@@ -193,8 +180,8 @@ const CafeInfoPage = ({ params }: PageParams) => {
                 </Link>
               )}
               {cafe.gmap_link && (
-                <Link 
-                  href={cafe.gmap_link} 
+                <Link
+                  href={cafe.gmap_link}
                   target="_blank"
                   className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-green-500 to-teal-500 text-white hover:opacity-90 transition-opacity"
                 >
@@ -214,25 +201,25 @@ const CafeInfoPage = ({ params }: PageParams) => {
               label="適合讀書"
               active={cafe.work_and_study_friendly}
             />
-            <Tag 
-              icon={<Timer className="w-5 h-5" />} 
-              label="不限時" 
-              active={cafe.time_unlimit} 
+            <Tag
+              icon={<Timer className="w-5 h-5" />}
+              label="不限時"
+              active={cafe.time_unlimit}
             />
-            <Tag 
-              icon={<Power className="w-5 h-5" />} 
-              label="有插座" 
-              active={cafe.socket} 
+            <Tag
+              icon={<Power className="w-5 h-5" />}
+              label="有插座"
+              active={cafe.socket}
             />
-            <Tag 
-              icon={<Dog className="w-5 h-5" />} 
-              label="可帶寵物" 
-              active={cafe.pets_allowed} 
+            <Tag
+              icon={<Dog className="w-5 h-5" />}
+              label="可帶寵物"
+              active={cafe.pets_allowed}
             />
-            <Tag 
-              icon={<Wifi className="w-5 h-5" />} 
-              label="提供WiFi" 
-              active={cafe.wiFi} 
+            <Tag
+              icon={<Wifi className="w-5 h-5" />}
+              label="提供WiFi"
+              active={cafe.wiFi}
             />
           </div>
         </div>
@@ -264,12 +251,12 @@ const CafeInfoPage = ({ params }: PageParams) => {
             </div>
             <ul className="space-y-1 text-gray-600">
               {["星期一", "星期二", "星期三", "星期四", "星期五", "星期六", "星期日"].map((day, index) => {
-              const hour = cafe.open_hour.find(h => h.day_of_week === day);
-              return (
-                <li key={index}>
-                {hour ? `${hour.day_of_week}: ${hour.open_time} - ${hour.close_time}` : `${day}: 休息`}
-                </li>
-              );
+                const hour = cafe.open_hour.find(h => h.day_of_week === day);
+                return (
+                  <li key={index}>
+                    {hour ? `${hour.day_of_week}: ${hour.open_time} - ${hour.close_time}` : `${day}: 休息`}
+                  </li>
+                );
               })}
             </ul>
           </div>

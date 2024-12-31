@@ -1,9 +1,9 @@
 "use client";
 
+import renderStars from "components/Star";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import API from "src/constants/api";
-import renderStars, { renderEmojiStars } from "components/Star";
 
 interface Cafe {
   cafe_id: string;
@@ -172,11 +172,10 @@ const HotSearchPage = () => {
                   <div className="flex justify-between items-center mb-4">
                     <h3 className="text-lg font-bold truncate">{cafe.name}</h3>
                     <span
-                      className={`text-sm font-bold px-2 py-1 rounded whitespace-nowrap ${
-                        cafe.isOpenNow
+                      className={`text-sm font-bold px-2 py-1 rounded whitespace-nowrap ${cafe.isOpenNow
                           ? "bg-green-500 text-white"
                           : "bg-red-500 text-white"
-                      }`}
+                        }`}
                     >
                       {cafe.isOpenNow ? "營業中" : "未營業"}
                     </span>
