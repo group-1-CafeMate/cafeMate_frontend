@@ -138,33 +138,29 @@ const FilteredPage = () => {
       fetchFilteredCafes();
     }
   }, [selectedOptions, location, selectedStation]);
-  const SearchParamsComponent = () => {
-    const searchParams = useSearchParams();
+  const searchParams = useSearchParams();
 
-    useEffect(() => {
-      if (!searchParams) return;
+  useEffect(() => {
+    if (!searchParams) return;
 
-      const newSelectedOptions: { [key: string]: boolean } = {};
-      const station = searchParams.get("station");
-      setSelectedStation(station);
+    const newSelectedOptions: { [key: string]: boolean } = {};
+    const station = searchParams.get("station");
+    setSelectedStation(station);
 
-      searchParams.forEach((value, key) => {
-        if (value === "true") {
-          const label = Object.entries(label_options).find(
-            ([_, val]) => val === key
-          )?.[0];
-          if (label) {
-            newSelectedOptions[label] = true;
-          }
+    searchParams.forEach((value, key) => {
+      if (value === "true") {
+        const label = Object.entries(label_options).find(
+          ([_, val]) => val === key
+        )?.[0];
+        if (label) {
+          newSelectedOptions[label] = true;
         }
-      });
+      }
+    });
 
-      setSelectedOptions(newSelectedOptions);
-    }, [searchParams]);
-
-    return null; // 此 component 無需渲染內容
-  };
-
+    setSelectedOptions(newSelectedOptions);
+    updateInputValue(newSelectedOptions);
+  }, [searchParams]);
 
   const updateInputValue = (options: { [key: string]: boolean }) => {
     const selectedOptions = Object.entries(options)
@@ -204,8 +200,7 @@ const FilteredPage = () => {
   }
 
   return (
-    <Suspense fallback={<div>載入搜尋參數...</div>}>
-      <SearchParamsComponent />
+    <Suspense fallback={<div>載入中...</div>}>
       <div className="min-h-screen bg-[#dfdad5] text-[#563517]">
         {/* Navigation */}
         <div className="flex justify-between items-center px-6 py-4 bg-[#563517] text-white">
