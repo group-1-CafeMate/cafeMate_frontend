@@ -249,10 +249,18 @@ const FilteredPage = () => {
               {/* Research Button */}
               <button
                 onClick={() => {
-                  // Synchronize temporary options to selected options
-                  setSelectedOptions({ ...tempSelectedOptions });
-                  // Trigger API call
-                  fetchFilteredCafes();
+                  const hasChanged = Object.keys(tempSelectedOptions).some(
+                    (key) => tempSelectedOptions[key] !== selectedOptions[key]
+                  );
+
+                  if (hasChanged) {
+                    // 同步 tempSelectedOptions 到 selectedOptions
+                    setSelectedOptions({ ...tempSelectedOptions });
+                    // 觸發 API 呼叫
+                    fetchFilteredCafes();
+                    return;
+                  }
+                  console.log("篩選條件未變更，無需重新查詢");
                 }}
                 className="bg-[#563517] text-white px-8 py-4 rounded-lg hover:bg-[#6f4827] text-lg whitespace-nowrap transition-all duration-300"
               >
@@ -362,7 +370,7 @@ const FilteredPage = () => {
           )}
         </div>
       </div>
-    </Suspense>
+    </Suspense >
   );
 };
 
