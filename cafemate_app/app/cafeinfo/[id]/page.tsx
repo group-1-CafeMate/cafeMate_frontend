@@ -131,7 +131,7 @@ const CafeInfoPage = ({ params }: PageParams) => {
       <div className="max-w-6xl mx-auto p-6 space-y-8">
         {/* Navigation */}
         <div className="flex space-x-4 mb-6">
-          <Link href="/homePage">
+          <Link href="/homepage">
             <span className="text-[#563517] hover:underline cursor-pointer">首頁</span>
           </Link>
           <span className="text-[#563517]">/</span>
