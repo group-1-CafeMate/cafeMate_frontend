@@ -4,5 +4,5 @@ export const label_options = {
   "有插座": "socket",
   "提供WiFi": "wifi",
   "營業中": "", // 營業中在由咖啡廳openhour在前端判斷
-  "可帶寵物": "pets_allowed",
+  "寵物咖啡廳": "pets_allowed",
 };

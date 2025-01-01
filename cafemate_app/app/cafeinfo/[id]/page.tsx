@@ -213,7 +213,7 @@ const CafeInfoPage = ({ params }: PageParams) => {
             />
             <Tag
               icon={<Dog className="w-5 h-5" />}
-              label="可帶寵物"
+              label="寵物咖啡廳"
               active={cafe.pets_allowed}
             />
             <Tag

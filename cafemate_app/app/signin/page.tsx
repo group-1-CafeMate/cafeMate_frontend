@@ -22,7 +22,7 @@ const SignIn = () => {
     setError("");
     setSuccessMessage("");
 
-    if (!username.trim()) {
+    if (!username) {
       setError("請先提供使用者名稱！");
       return;
     }
@@ -36,7 +36,7 @@ const SignIn = () => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ username: username.trim() }),
+        body: JSON.stringify({ username: username }),
       });
 
       const data = await response.json();
@@ -158,7 +158,7 @@ const SignIn = () => {
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 p-1 rounded-full hover:bg-gray-100"
                 >
-                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  {showPassword ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
                 </button>
               </div>
             </div>
