@@ -8,6 +8,7 @@ export const API = {
         GetUserInfo: `${BASE_URL}/user/`,
         SendVerificationEmail: `${BASE_URL}/user/email/`, // 寄送驗證信的 API
         ForgotPassword: `${BASE_URL}/pw/forgot/`, // 忘記密碼的 API
+        ResetPassword: `${BASE_URL}/pw/reset/`, // 重設密碼的 API
     },
     Cafe: {
         GetCafe: `${BASE_URL}/cafe/`,
