@@ -1,16 +1,16 @@
 "use client";
 
-import CafeSkeleton from "components/CafeSkeleton";
+import { getUserUid } from "components/GetUid";
+import CafeSkeleton from "components/skeletons/CafeSkeleton";
+import TitleSkeleton from "components/skeletons/TitleSkeleton";
 import renderStars from "components/Star";
-import dynamic from "next/dynamic";
-import Image from "next/image";
+import UserMenu from "components/UserMenu";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import API from "src/constants/api";
 import { label_options } from "src/constants/label_options";
 import { mrtLines } from "src/constants/mrtStations";
-import getCookie from "src/getCookies";
 interface Cafe {
   cafe_id: string;
   name: string;
@@ -26,7 +26,9 @@ interface Cafe {
   isOpenNow?: boolean; // 是否營業
 }
 const HomePage = () => {
+  const [email, setEmail] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [uidIsLoading, setUidIsLoading] = useState(true);
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<string>("homepage");
   const [inputValue, setInputValue] = useState<string>("");
@@ -42,7 +44,22 @@ const HomePage = () => {
   const cafesPerPage = 3; // 每頁顯示卡片數量
   const totalPages = Math.min(Math.ceil(allCafes.length / cafesPerPage), 3); // 總頁數3頁
   const [username, setUsername] = useState<string | null>(null); // State to store username
-  const userId = getCookie("uid"); // Get the user ID from cookies
+  useEffect(() => {
+    setUidIsLoading(true);
+    const uid = getUserUid();
+    if (uid) {
+      fetchUserData();
+    }
+    setUidIsLoading(false);
+  }, []);
+
+
+  useEffect(() => {
+    if (getUserUid()) {
+      fetchUserData(); // Fetch user data on component mount
+    }
+  }, []);
+  
 
   useEffect(() => {
     if (typeof window !== "undefined" && navigator.geolocation) {
@@ -186,27 +203,41 @@ const HomePage = () => {
 
   // Fetch user data after login
   const fetchUserData = async () => {
+    const userId = getUserUid(); // This is better off being outside useEffect
     try {
       const response = await fetch(`${API.User.GetUserInfo}?uid=${userId}`, {
         method: "GET",
         credentials: "include",
       });
       const data = await response.json();
-      if (data.status === "success" && data.data.username) {
-        setUsername(data.data.username); // Set the username from the response
+      if (data.status === "success" && data.data) {
+        setUsername(data.data.username);
+        setEmail(data.data.email); // Add this line
       } else {
-        console.error(data.message); // Handle error message
+        console.error(data.message);
       }
     } catch (error) {
       console.error("Error fetching user data:", error);
     }
   };
 
-  useEffect(() => {
-    if (userId) {
-      fetchUserData(); // Fetch user data on component mount
+  const handleResetPassword = async () => {
+    try {
+      const response = await fetch(`${API.User.GetUserInfo}?uid=${getUserUid()}`, {
+        method: "GET",
+        credentials: "include",
+      });
+      const data = await response.json();
+      if (data.status === "success" && data.data) {
+        setUsername(data.data.username);
+        setEmail(data.data.email); // Add this line
+      } else {
+        console.error(data.message);
+      }
+    } catch (error) {
+      console.error("Error fetching user data:", error);
     }
-  }, [userId]);
+  };
 
   return (
     <div className="min-h-screen bg-[#dfdad5] text-[#563517]">
@@ -214,21 +245,24 @@ const HomePage = () => {
       <div className="flex justify-between items-center px-6 sm:px-8 py-4 bg-[#563517] text-white text-lg">
         <div className="flex space-x-6">
           <button
-            className={`${activeTab === "homepage" ? "underline" : ""} hover:underline text-lg`}
-            onClick={() => setActiveTab("homepage")}
+          className={`${
+            activeTab === "homepage" ? "bg-[#724e2c]" : ""
+          } hover:bg-[#724e2c] px-4 py-2 rounded-lg transition-colors duration-300 text-lg`}
+          onClick={() => setActiveTab("homepage")}
           >
             首頁
           </button>
           <Link href="/hotsearch">
-            <button className="hover:underline text-lg">熱門推薦</button>
+          <button className="hover:bg-[#724e2c] px-4 py-2 rounded-lg transition-colors duration-300 text-lg">
+            熱門推薦
+          </button>
           </Link>
         </div>
-        <button
-          className="bg-white text-[#563517] px-5 py-2 rounded text-lg transition-colors duration-200 hover:bg-[#c5a782] hover:text-white"
-          onClick={handleLogout}
-        >
-          Log Out
-        </button>
+        <UserMenu
+          username={username}
+          email={email}
+          onLogout={handleLogout}
+        />
       </div>
       {/* Search Section */}
       <div className="p-4 sm:p-6 md:p-8 max-w-7xl mx-auto">
@@ -290,10 +324,13 @@ const HomePage = () => {
       {/* Cafes Section with Grid Layout */}
       <div className="bg-[#724e2c] text-white min-h-[70vh] flex flex-col justify-between">
         <div className="p-6 sm:p-8 flex-grow flex flex-col">
+          { uidIsLoading ? (
+            <TitleSkeleton/> ): 
+          (
           <h2 className="text-2xl sm:text-2xl font-bold mb-4 text-center">
-            嗨! {username ? username : "使用者"} 我們為你收集了這些咖啡廳：
+            嗨! {username ? username : ""} 我們為你收集了這些咖啡廳：
           </h2>
-
+          )}
           {/* Grid Layout for Cafe Cards */}
           { isLoading ? (
             <CafeSkeleton/> ): (

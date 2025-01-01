@@ -4,6 +4,7 @@ import Button from "components/Button";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import API from "src/constants/api";
+import { Eye, EyeOff } from 'lucide-react'; // Import icons
 
 const SignUp: React.FC = () => {
   const [username, setUsername] = useState(""); // 儲存使用者名稱
@@ -11,6 +12,7 @@ const SignUp: React.FC = () => {
   const [password, setPassword] = useState(""); // 儲存密碼
   const [error, setError] = useState(""); // 儲存錯誤訊息
   const [success, setSuccess] = useState(""); // 儲存成功訊息
+  const [showPassword, setShowPassword] = useState(false); // State to toggle password visibility
   const router = useRouter();
   // 發送註冊請求的函數
   const handleSignUp = async () => {
@@ -98,14 +100,23 @@ const SignUp: React.FC = () => {
             <label htmlFor="password" className="block text-gray-700">
               Password
             </label>
-            <input
-              type="password"
-              id="password"
-              placeholder="********"
-              className="w-full border-b-2 border-gray-300 focus:outline-none focus:border-input-focus-color py-2"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)} // 更新密碼
-            />
+            <div className="relative">
+              <input
+                type={showPassword ? 'text' : 'password'} // Toggle input type
+                id="password"
+                placeholder="********"
+                className="w-full border-b-2 border-gray-300 focus:outline-none focus:border-input-focus-color py-2"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)} // Toggle visibility
+                className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 p-1 rounded-full hover:bg-gray-100"
+              >
+                {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+              </button>
+            </div>
           </div>
           {error && <p className="text-red-500 text-sm">{error}</p>}{" "}
           {/* 顯示錯誤訊息 */}

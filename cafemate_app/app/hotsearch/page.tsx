@@ -130,9 +130,11 @@ const HotSearchPage = () => {
       <div className="flex justify-between items-center px-6 py-4 bg-[#563517] text-white">
         <div className="flex space-x-6">
           <Link href="/homepage">
-            <button className="text-gray-400 hover:underline">回首頁</button>
+            <button className="hover:bg-[#724e2c] px-4 py-2 rounded-lg transition-colors duration-300 text-lg">回首頁</button>
           </Link>
-          <button className="underline hover:underline">熱門推薦</button>
+          <button className="hover:bg-[#724e2c] px-4 py-2 rounded-lg transition-colors duration-300 text-lg">
+            熱門推薦
+          </button>
         </div>
       </div>
 

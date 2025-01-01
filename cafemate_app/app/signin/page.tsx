@@ -4,6 +4,7 @@ import Button from "components/Button";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import API from "src/constants/api";
+import { Eye, EyeOff } from 'lucide-react';
 
 const SignIn = () => {
   const [username, setUsername] = useState("");
@@ -12,6 +13,7 @@ const SignIn = () => {
   const [successMessage, setSuccessMessage] = useState("");
   const [isForgotPassword, setIsForgotPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
 
   const handleForgotPassword = async () => {
@@ -142,14 +144,23 @@ const SignIn = () => {
               <label htmlFor="password" className="block text-foreground">
                 PASSWORD
               </label>
-              <input
-                type="password"
-                id="password"
-                placeholder="********"
-                className="w-full border-b-2 border-gray-300 focus:outline-none focus:border-accent-color py-2"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
+              <div className="relative">
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  id="password"
+                  placeholder="********"
+                  className="w-full border-b-2 border-gray-300 focus:outline-none focus:border-accent-color py-2"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 p-1 rounded-full hover:bg-gray-100"
+                >
+                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                </button>
+              </div>
             </div>
             {error && <p className="text-red-500 text-sm">{error}</p>}
             <div className="text-right">
