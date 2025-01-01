@@ -53,13 +53,11 @@ const HomePage = () => {
     setUidIsLoading(false);
   }, []);
 
-
   useEffect(() => {
     if (getUserUid()) {
       fetchUserData(); // Fetch user data on component mount
     }
   }, []);
-  
 
   useEffect(() => {
     if (typeof window !== "undefined" && navigator.geolocation) {
@@ -223,10 +221,13 @@ const HomePage = () => {
 
   const handleResetPassword = async () => {
     try {
-      const response = await fetch(`${API.User.GetUserInfo}?uid=${getUserUid()}`, {
-        method: "GET",
-        credentials: "include",
-      });
+      const response = await fetch(
+        `${API.User.GetUserInfo}?uid=${getUserUid()}`,
+        {
+          method: "GET",
+          credentials: "include",
+        }
+      );
       const data = await response.json();
       if (data.status === "success" && data.data) {
         setUsername(data.data.username);
@@ -245,24 +246,20 @@ const HomePage = () => {
       <div className="flex justify-between items-center px-6 sm:px-8 py-4 bg-[#563517] text-white text-lg">
         <div className="flex space-x-6">
           <button
-          className={`${
-            activeTab === "homepage" ? "bg-[#724e2c]" : ""
-          } hover:bg-[#724e2c] px-4 py-2 rounded-lg transition-colors duration-300 text-lg`}
-          onClick={() => setActiveTab("homepage")}
+            className={`${
+              activeTab === "homepage" ? "bg-[#724e2c]" : ""
+            } hover:bg-[#724e2c] px-4 py-2 rounded-lg transition-colors duration-300 text-lg`}
+            onClick={() => setActiveTab("homepage")}
           >
             首頁
           </button>
           <Link href="/hotsearch">
-          <button className="hover:bg-[#724e2c] px-4 py-2 rounded-lg transition-colors duration-300 text-lg">
-            熱門推薦
-          </button>
+            <button className="hover:bg-[#724e2c] px-4 py-2 rounded-lg transition-colors duration-300 text-lg">
+              熱門推薦
+            </button>
           </Link>
         </div>
-        <UserMenu
-          username={username}
-          email={email}
-          onLogout={handleLogout}
-        />
+        <UserMenu username={username} email={email} onLogout={handleLogout} />
       </div>
       {/* Search Section */}
       <div className="p-4 sm:p-6 md:p-8 max-w-7xl mx-auto">
@@ -308,10 +305,11 @@ const HomePage = () => {
           {Object.keys(label_options).map((option) => (
             <div
               key={option}
-              className={`flex items-center justify-center px-4 py-2 rounded-full cursor-pointer transition-all duration-300 text-lg transform hover:scale-105 ${selectedOptions[option]
+              className={`flex items-center justify-center px-4 py-2 rounded-full cursor-pointer transition-all duration-300 text-lg transform hover:scale-105 ${
+                selectedOptions[option]
                   ? "bg-green-500 text-white border-green-500"
                   : "bg-gray-200 text-gray-700 border-gray-300 hover:shadow-lg"
-                }`}
+              }`}
               onClick={() => handleOptionSelect(option)}
             >
               {selectedOptions[option] && <span className="mr-2">✔️</span>}
@@ -324,62 +322,64 @@ const HomePage = () => {
       {/* Cafes Section with Grid Layout */}
       <div className="bg-[#724e2c] text-white min-h-[70vh] flex flex-col justify-between">
         <div className="p-6 sm:p-8 flex-grow flex flex-col">
-          { uidIsLoading ? (
-            <TitleSkeleton/> ): 
-          (
-          <h2 className="text-2xl sm:text-2xl font-bold mb-4 text-center">
-            嗨! {username ? username : ""} 我們為你收集了這些咖啡廳：
-          </h2>
+          {uidIsLoading ? (
+            <TitleSkeleton />
+          ) : (
+            <h2 className="text-2xl sm:text-2xl font-bold mb-4 text-center">
+              嗨! {username ? username : ""} 我們為你收集了這些咖啡廳：
+            </h2>
           )}
           {/* Grid Layout for Cafe Cards */}
-          { isLoading ? (
-            <CafeSkeleton/> ): (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-            {displayedCafes.map((cafe: Cafe, index) => (
-              <Link
-                href={`/cafeinfo/${cafe.cafe_id}`}
-                key={cafe.cafe_id}
-                className="bg-white text-[#563517] p-6 rounded-lg shadow-md hover:scale-105 transition-transform duration-300"
-              >
-                {/* Cafe Image */}
-                {cafe.images_urls.length > 0 ? (
-                  <div className="w-full h-64 relative mb-4">
-                    <img
-                      src={cafe.images_urls[0]}
-                      alt={cafe.name}
-                      className="w-full h-full object-cover rounded-lg"
-                    />
-                  </div>
-                ) : (
-                  <div className="w-full h-64 bg-gray-300 flex items-center justify-center rounded-lg">
-                    <p className="text-gray-500">無圖片</p>
-                  </div>
-                )}
+          {isLoading ? (
+            <CafeSkeleton />
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+              {displayedCafes.map((cafe: Cafe, index) => (
+                <Link
+                  href={`/cafeinfo/${cafe.cafe_id}`}
+                  key={cafe.cafe_id}
+                  className="bg-white text-[#563517] p-6 rounded-lg shadow-md hover:scale-105 transition-transform duration-300"
+                >
+                  {/* Cafe Image */}
+                  {cafe.images_urls.length > 0 ? (
+                    <div className="w-full h-64 relative mb-4">
+                      <img
+                        src={cafe.images_urls[0]}
+                        alt={cafe.name}
+                        className="w-full h-full object-cover rounded-lg"
+                      />
+                    </div>
+                  ) : (
+                    <div className="w-full h-64 bg-gray-300 flex items-center justify-center rounded-lg">
+                      <p className="text-gray-500">無圖片</p>
+                    </div>
+                  )}
 
-                {/* Cafe Details */}
-                <div className="mb-4">
-                  <div className="flex justify-between items-center">
-                    {/* Cafe Name */}
-                    <h3 className="text-lg font-bold">{cafe.name}</h3>
-                    {/* Open/Closed Tag */}
-                    <span
-                      className={`text-lg font-bold px-2 py-1 rounded whitespace-nowrap ${cafe.isOpenNow
-                          ? "bg-green-500 text-white"
-                          : "bg-red-500 text-white"
+                  {/* Cafe Details */}
+                  <div className="mb-4">
+                    <div className="flex justify-between items-center">
+                      {/* Cafe Name */}
+                      <h3 className="text-lg font-bold">{cafe.name}</h3>
+                      {/* Open/Closed Tag */}
+                      <span
+                        className={`text-lg font-bold px-2 py-1 rounded whitespace-nowrap ${
+                          cafe.isOpenNow
+                            ? "bg-green-500 text-white"
+                            : "bg-red-500 text-white"
                         }`}
-                    >
-                      {cafe.isOpenNow ? "營業中" : "未營業"}
+                      >
+                        {cafe.isOpenNow ? "營業中" : "未營業"}
+                      </span>
+                    </div>
+                    {/* Star Rating */}
+                    <span className="text-sm text-gray-600 block">
+                      {renderStars(cafe.rating)}
                     </span>
                   </div>
-                  {/* Star Rating */}
-                  <span className="text-sm text-gray-600 block">
-                    {renderStars(cafe.rating)}
-                  </span>
-                </div>
-              </Link>
-            ))}
-          </div>
-        )}
+                </Link>
+              ))}
+            </div>
+          )}
         </div>
 
         <div className="flex justify-center mt-3 space-x-4">

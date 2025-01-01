@@ -48,10 +48,6 @@ const FilteredPage = () => {
 
     try {
       const queryParams = new URLSearchParams();
-
-      // selectedOptions.forEach((opt) => {
-      //   queryParams.append(opt, "true");
-      // });
       Object.entries(selectedOptions).forEach(([label, isSelected]) => {
         if (isSelected) {
           const key = label_options[label as keyof typeof label_options];
@@ -81,6 +77,10 @@ const FilteredPage = () => {
           ...cafe,
           isOpenNow: checkIsOpen(cafe.open_hour),
         }));
+        cafesWithOpenStatus.sort((a, b) => {
+          if (a.isOpenNow === b.isOpenNow) return 0;
+          return a.isOpenNow ? -1 : 1; // 營業中優先
+        });
         setFilteredCafes(cafesWithOpenStatus);
       } else {
         setError("無法獲取篩選結果，請稍後再試。");
@@ -200,7 +200,6 @@ const FilteredPage = () => {
   }
 
   return (
-
     <div className="min-h-screen bg-[#dfdad5] text-[#563517]">
       {/* Navigation */}
       <div className="flex justify-between items-center px-6 py-4 bg-[#563517] text-white">
@@ -296,26 +295,17 @@ const FilteredPage = () => {
                 alt={cafe.name}
                 className="h-64 w-full object-cover rounded-lg mb-4"
               />
-
-              {/* 完全符合需求標籤 */}
-              {Object.keys(selectedOptions).every((opt) =>
-                cafe.labels.includes(opt)
-              ) && (
-                  <div className="absolute top-0 left-0 bg-red-600 bg-opacity-80 text-white px-4 py-1 rounded-tl-lg">
-                    完全符合你的需求
-                  </div>
-                )}
-
               {/* Cafe Details */}
               <div className="flex justify-between items-center mb-4">
                 {/* Cafe Name */}
                 <h3 className="text-lg font-bold">{cafe.name}</h3>
                 {/* Open Status */}
                 <span
-                  className={`text-lg font-bold px-2 py-1 rounded whitespace-nowrap ${cafe.isOpenNow
-                    ? "bg-green-500 text-white"
-                    : "bg-red-500 text-white"
-                    }`}
+                  className={`text-lg font-bold px-2 py-1 rounded whitespace-nowrap ${
+                    cafe.isOpenNow
+                      ? "bg-green-500 text-white"
+                      : "bg-red-500 text-white"
+                  }`}
                 >
                   {cafe.isOpenNow ? "營業中" : "未營業"}
                 </span>
@@ -326,12 +316,11 @@ const FilteredPage = () => {
                 {renderStars(cafe.rating)}
               </div>
 
-              {/* 額外資訊 */}
               <p className="text-sm text-gray-700">
                 🏷️{" "}
                 {
-                  Object.keys(selectedOptions).filter((option) =>
-                    cafe.labels.includes(option)
+                  Object.entries(selectedOptions).filter(
+                    ([_key, isSelected]) => isSelected
                   ).length
                 }{" "}
                 個符合篩選條件
@@ -370,7 +359,6 @@ const FilteredPage = () => {
         )}
       </div>
     </div>
-
   );
 };
 
