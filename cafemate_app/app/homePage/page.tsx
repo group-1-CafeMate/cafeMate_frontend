@@ -1,5 +1,10 @@
 "use client";
 
+<<<<<<< Updated upstream:cafemate_app/app/homePage/page.tsx
+=======
+import CafeSkeleton from "components/CafeSkeleton";
+import renderStars from "components/Star";
+>>>>>>> Stashed changes:cafemate_app/app/homepage/page.tsx
 import dynamic from "next/dynamic";
 import Image from "next/image";
 import Link from "next/link";
@@ -26,6 +31,7 @@ interface Cafe {
 }
 const HomePage = () => {
   const router = useRouter();
+  const [isLoading, setIsLoading] = useState(true); // Loading state
   const [activeTab, setActiveTab] = useState<string>("homepage");
   const [inputValue, setInputValue] = useState<string>("");
   const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
@@ -100,17 +106,23 @@ const HomePage = () => {
 
   useEffect(() => {
     const fetchAllCafes = async () => {
-      const response = await fetch(API.Cafe.GetCafes, {
-        method: "GET",
-        credentials: "include",
-      });
-      const data = await response.json();
-      const cafesWithOpenStatus = data.cafes.map((cafe: Cafe) => ({
-        ...cafe,
-        isOpenNow: checkIsOpen(cafe.open_hour), // 判斷是否營業
-      }));
-
-      setAllCafes(cafesWithOpenStatus);
+      setIsLoading(true);
+      try {
+        const response = await fetch(API.Cafe.GetCafes, {
+          method: "GET",
+          credentials: "include",
+        });
+        const data = await response.json();
+        const cafesWithOpenStatus = data.cafes.map((cafe: Cafe) => ({
+          ...cafe,
+          isOpenNow: checkIsOpen(cafe.open_hour),
+        }));
+        setAllCafes(cafesWithOpenStatus);
+      } catch (error) {
+        console.error("Error fetching cafes:", error);
+      } finally {
+        setIsLoading(false);
+      }
     };
 
     fetchAllCafes();
@@ -283,6 +295,9 @@ const HomePage = () => {
           </h2>
 
           {/* Grid Layout for Cafe Cards */}
+          {isLoading ? (
+            <CafeSkeleton />
+          ):(
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
             {displayedCafes.map((cafe: Cafe, index) => (
               <Link
@@ -329,7 +344,11 @@ const HomePage = () => {
               </Link>
             ))}
           </div>
+<<<<<<< Updated upstream:cafemate_app/app/homePage/page.tsx
 
+=======
+        )}
+>>>>>>> Stashed changes:cafemate_app/app/homepage/page.tsx
         </div>
 
         <div className="flex justify-center mt-3 space-x-4">
