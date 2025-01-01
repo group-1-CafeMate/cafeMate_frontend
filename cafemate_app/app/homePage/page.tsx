@@ -1,10 +1,4 @@
 "use client";
-
-<<<<<<< Updated upstream:cafemate_app/app/homePage/page.tsx
-=======
-import CafeSkeleton from "components/CafeSkeleton";
-import renderStars from "components/Star";
->>>>>>> Stashed changes:cafemate_app/app/homepage/page.tsx
 import dynamic from "next/dynamic";
 import Image from "next/image";
 import Link from "next/link";
@@ -15,6 +9,7 @@ import { label_options } from "src/constants/label_options";
 import { mrtLines } from "src/constants/mrtStations";
 import getCookie from "src/getCookies";
 import renderStars, { renderEmojiStars } from "components/Star";
+import CafeSkeleton from "components/CafeSkeleton";
 interface Cafe {
   cafe_id: string;
   name: string;
@@ -344,11 +339,7 @@ const HomePage = () => {
               </Link>
             ))}
           </div>
-<<<<<<< Updated upstream:cafemate_app/app/homePage/page.tsx
-
-=======
         )}
->>>>>>> Stashed changes:cafemate_app/app/homepage/page.tsx
         </div>
 
         <div className="flex justify-center mt-3 space-x-4">
