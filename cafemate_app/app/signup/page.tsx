@@ -4,7 +4,7 @@ import Button from "components/Button";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import API from "src/constants/api";
-import { Eye, EyeOff } from 'lucide-react'; // Import icons
+import { Eye, EyeOff } from "lucide-react"; // Import icons
 
 const SignUp: React.FC = () => {
   const [username, setUsername] = useState(""); // 儲存使用者名稱
@@ -42,7 +42,7 @@ const SignUp: React.FC = () => {
         });
 
         setTimeout(() => {
-          router.push("/signIn");
+          router.push("/signin");
         }, 2000); // 延遲導航以便顯示成功訊息
       } else {
         setError(data.message || "註冊失敗");
@@ -102,7 +102,7 @@ const SignUp: React.FC = () => {
             </label>
             <div className="relative">
               <input
-                type={showPassword ? 'text' : 'password'} // Toggle input type
+                type={showPassword ? "text" : "password"} // Toggle input type
                 id="password"
                 placeholder="********"
                 className="w-full border-b-2 border-gray-300 focus:outline-none focus:border-input-focus-color py-2"
@@ -114,7 +114,11 @@ const SignUp: React.FC = () => {
                 onClick={() => setShowPassword(!showPassword)} // Toggle visibility
                 className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 p-1 rounded-full hover:bg-gray-100"
               >
-                {showPassword ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
+                {showPassword ? (
+                  <Eye className="h-4 w-4" />
+                ) : (
+                  <EyeOff className="h-4 w-4" />
+                )}
               </button>
             </div>
           </div>
