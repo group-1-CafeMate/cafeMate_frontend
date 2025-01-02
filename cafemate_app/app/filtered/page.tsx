@@ -242,7 +242,7 @@ const FilteredPage = () => {
                     className="bg-green-500 text-white px-4 py-2 rounded-full text-sm cursor-pointer transition-all duration-300 hover:bg-green-600"
                     onClick={() => toggleTempOption(option)}
                   >
-                    {option} ×
+                    {option} ✕
                   </span>
                 ))}
             </div>
