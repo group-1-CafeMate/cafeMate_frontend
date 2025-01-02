@@ -24,7 +24,7 @@ jobs:
     # 構建 Docker 映像
     - name: Build Docker image
       run: |
-        docker build --platform=linux/amd64 -t ychaocode/nextjs-app:${{ github.sha }} .
+        docker build --platform=linux/amd64 -t ychaocode/nextjs-app:${{ github.sha }} ./cafemate_app
 
     # 推送 Docker 映像至 Docker Hub
     - name: Push Docker image to Docker Hub
