@@ -206,11 +206,13 @@ const FilteredPage = () => {
         <div className="flex space-x-6">
           {/* 按鈕導航到首頁 */}
           <Link href="/homepage">
-            <button className="underline hover:underline">首頁</button>
+            <button className="hover:bg-[#724e2c] px-4 py-2 rounded-lg transition-colors duration-300 text-lg">回首頁</button>
           </Link>
           {/* 按鈕導航到熱門推薦 */}
           <Link href="/hotsearch">
-            <button className="text-gray-400 hover:underline">熱門推薦</button>
+            <button className="hover:bg-[#724e2c] px-4 py-2 rounded-lg transition-colors duration-300 text-lg">
+              熱門推薦
+            </button>
           </Link>
         </div>
       </div>
