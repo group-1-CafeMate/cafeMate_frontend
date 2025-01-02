@@ -1,5 +1,5 @@
 # 使用輕量基礎映像作為構建階段
-FROM node:18-alpine AS builder
+FROM --platform=linux/amd64 node:18-alpine AS builder
 
 # 設定工作目錄
 WORKDIR /app
