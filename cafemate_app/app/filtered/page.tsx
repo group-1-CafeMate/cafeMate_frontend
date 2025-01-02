@@ -77,7 +77,7 @@ const FilteredPage = () => {
           ...cafe,
           isOpenNow: checkIsOpen(cafe.open_hour),
         }));
-        cafesWithOpenStatus.sort((a, b) => {
+        cafesWithOpenStatus.sort((a: Cafe, b: Cafe) => {
           if (a.isOpenNow === b.isOpenNow) return 0;
           return a.isOpenNow ? -1 : 1; // 營業中優先
         });
@@ -301,11 +301,10 @@ const FilteredPage = () => {
                 <h3 className="text-lg font-bold">{cafe.name}</h3>
                 {/* Open Status */}
                 <span
-                  className={`text-lg font-bold px-2 py-1 rounded whitespace-nowrap ${
-                    cafe.isOpenNow
+                  className={`text-lg font-bold px-2 py-1 rounded whitespace-nowrap ${cafe.isOpenNow
                       ? "bg-green-500 text-white"
                       : "bg-red-500 text-white"
-                  }`}
+                    }`}
                 >
                   {cafe.isOpenNow ? "營業中" : "未營業"}
                 </span>
